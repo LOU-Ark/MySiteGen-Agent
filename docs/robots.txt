@@ -1,7 +1,0 @@
-# すべてのクローラー (*) に対して
-User-agent: *
-# サイト全体 (/) のクロールを許可
-Allow: /
-
-# サイトマップの場所を通知
-Sitemap: https://LOU-Ark.github.io/hp-generation-agent/sitemap.xml
