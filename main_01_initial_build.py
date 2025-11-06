@@ -17,7 +17,10 @@ from agents.agent_03_generation import generate_single_page_html
 
 # --- 0. 設定 ---
 OPINION_FILE = "config/opinion.txt"
-REPORTS_DIR = "output_reports"
+# ⬇️ [修正] メインの出力先を 'output' フォルダに
+MAIN_OUTPUT_DIR = "output"
+REPORTS_DIR = os.path.join(MAIN_OUTPUT_DIR, "output_reports")
+# (OUTPUT_DIR と ZIP_FILENAME は main() 内で動的に設定)
 
 def setup_client():
     """Geminiクライアントを初期化"""
@@ -103,7 +106,7 @@ def main():
         sys.exit(1)
 
     # --- [修正] レポートディレクトリを先に作成 ---
-    os.makedirs(REPORTS_DIR, exist_ok=True)
+    os.makedirs(REPORTS_DIR, exist_ok=True) # ⬅️ 'output/output_reports' を作成
 
     # --- 2. 個人の意見をロード ---
     try:
@@ -126,14 +129,15 @@ def main():
 
     # --- 4. サイト名の動的生成 ---
     SITE_SLUG = generate_site_name_and_slug(gemini_client, IDENTITY_TEXT, SITE_TYPE)
-    OUTPUT_DIR = os.path.join("output_website", SITE_SLUG)
-    ZIP_FILENAME = os.path.join("output_website", f"{SITE_SLUG}.zip")
+    # ⬇️ [修正] 出力先を 'output/output_website/[slug]' に変更
+    OUTPUT_DIR = os.path.join(MAIN_OUTPUT_DIR, "output_website", SITE_SLUG)
+    # ⬇️ [修正] ZIPファイル名を変更
+    ZIP_FILENAME = f"{SITE_SLUG}_output.zip" # 例: "anima-cognita-portfolio_output.zip"
     print(f"✅ 出力先を動的に設定: {OUTPUT_DIR}")
 
     # --- 5. 戦略の生成 ---
     print("\n--- [フェーズ3] サイト戦略の生成を開始 ---")
     
-    # ⬇️ [修正] SITE_TYPE を渡す
     sitemap_result = generate_final_sitemap(gemini_client, IDENTITY_TEXT, SITE_TYPE)
     try:
         with open(os.path.join(REPORTS_DIR, "02_sitemap.md"), 'w', encoding='utf-8') as f:
@@ -142,7 +146,6 @@ def main():
     except Exception as e:
         print(f"⚠️ [レポート] 02_sitemap.md の保存中にエラー: {e}")
 
-    # ⬇️ [修正] SITE_TYPE を渡す
     content_strategy_result = generate_content_strategy(gemini_client, IDENTITY_TEXT, sitemap_result, SITE_TYPE)
     try:
         with open(os.path.join(REPORTS_DIR, "03_content_strategy.md"), 'w', encoding='utf-8') as f:
@@ -151,7 +154,6 @@ def main():
     except Exception as e:
         print(f"⚠️ [レポート] 03_content_strategy.md の保存中にエラー: {e}")
 
-    # (generate_target_page_list は 'strategy' に基づくため、SITE_TYPEを渡す必要はなし)
     TARGET_PAGES_LIST = generate_target_page_list(gemini_client, IDENTITY_TEXT, content_strategy_result)
     try:
         with open(os.path.join(REPORTS_DIR, "04_target_pages_list.json"), 'w', encoding='utf-8') as f:
@@ -175,7 +177,6 @@ def main():
     for page in TARGET_PAGES_LIST:
         print(f"\n--- 🏭 ページ生成: {page['title']} ({page['file_name']}) ---")
 
-        # ⬇️ [修正] SITE_TYPE を渡す
         final_html_code = generate_single_page_html(
             gemini_client,
             page,
@@ -184,7 +185,7 @@ def main():
             TARGET_PAGES_LIST,
             GTM_ID=None, 
             ADSENSE_CLIENT_ID=None,
-            SITE_TYPE=SITE_TYPE, # ⬅️ 選択したタイプを渡す
+            SITE_TYPE=SITE_TYPE, 
             retry_attempts=3
         )
 
@@ -206,10 +207,15 @@ def main():
     for filename, status in generated_files.items():
         print(f"{filename.ljust(30)}: {status}")
 
-    # --- ZIP化 ---
+    # ---  ZIP化 ---
+    # ⬇️ [修正] 'MAIN_OUTPUT_DIR' ('output' フォルダ) を丸ごとZIP化
     print(f"\n--- 📦 {ZIP_FILENAME} にZIP圧縮中 ---")
     try:
-        shutil.make_archive(ZIP_FILENAME.replace('.zip', ''), 'zip', OUTPUT_DIR)
+        shutil.make_archive(
+            ZIP_FILENAME.replace('.zip', ''),  # ZIPファイル名 (例: 'anima-cognita-portfolio_output')
+            'zip',                             # 形式
+            MAIN_OUTPUT_DIR                    # ⬅️ 圧縮対象 ('output' フォルダ)
+        )
         print(f"✅ ZIPファイルの作成が完了しました: {ZIP_FILENAME}")
     except Exception as e:
         print(f"❌ ZIPファイルの作成中にエラーが発生しました: {e}")
