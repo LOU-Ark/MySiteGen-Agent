@@ -1,167 +1,189 @@
-# hp-generation-agent
+# MySiteGen-Agent
 
 ## 概要
 
-このリポジトリは、大規模言語モデルを使用してWebコンテンツの生成と改善を行うために設計された、Pythonベースのエージェントシステムを含んでいます。エージェントは、法人格（コーポレートアイデンティティ）の定義、Webサイト戦略の策定、初期HTMLコンテンツの生成、および既存コンテンツの改善に焦点を当てています。
+`MySiteGen-Agent`は、Google Gemini APIを活用したPythonベースのAIエージェントシステムです。単一の「理念（`opinion.txt`）」ファイルに基づき、\*\*「法人サイト」**または**「個人ポートフォリオ」\*\*を選択的に自動構築し、継続的にコンテンツを改善・拡張します。
 
-## 主な機能と利点
+このシステムは、単なるHTMLジェネレーターではなく、\*\*Webサイトの完全なライフサイクル（戦略策定 → 初回構築 → 分析 → 改善）\*\*を自動化するよう設計されています。
 
-  * **法人格（コーポレートアイデンティティ）の定義:** 提供されたテキストに基づき、法人格（パーパス、ミッション、ビジョン）を生成します。
-  * **Webサイト戦略の生成:** Webサイトの構造をガイドするための階層的なサイトマップを作成します。
-  * **HTMLの生成:** ターゲットページの基本情報、法人格、サイトマップ戦略に基づき、HTMLページを生成します。
-  * **コンテンツの改善:** 既存のHTMLコンテンツを分析し、構造的および意味的な改善を行います。
+-----
 
-## 前提条件と依存関係
+## 主な機能とワークフロー
 
-  * Python 3.7以上
-  * `google-generative-ai` (Google Gemini API)
-  * `beautifulsoup4`
-  * `pandas`
-  * Google Gemini APIへのアクセス（APIキーが設定済みであること）
+このプロジェクトは、複数の「実行スクリプト」（`main_*.py`）によって構成されています。
 
-必要な依存関係をpipでインストールします：
+### 1\. `main_01_initial_build.py` (フェーズ1-4: 初回構築)
+
+  * **サイトタイプの選択:** 実行時に「法人」か「個人」かを質問します。
+  * **アイデンティティ生成 (`agent_01`):** `config/opinion.txt` を読み込み、「法人格」または「パーソナル・ブランド」をAIが定義します。
+  * **サイト名生成:** AIがアイデンティティに基づき、サイト名（例: `seimei-chisei-ark`）を動的に命名します。
+  * **戦略策定 (`agent_02`):** サイトタイプに合わせたサイトマップ（例: `PROJECTS` or `SOLUTIONS`）と戦略をAIが策定します。
+  * **ハブページ生成 (`agent_03`):** 策定された戦略に基づき、サイトの骨格となる全ハブページ（`index.html` など）のHTMLをAIが一括生成します。
+
+### 2\. `main_02_improvement_cycle.py` (フェーズ5-6: 改善サイクル)
+
+  * **戦略的バランス分析 (`agent_04`):**
+      * AIが既存サイト（`planned_articles.md`）を分析し、「`vision/` 21件」「`solutions/` 5件」といった**記事数の偏り**を検出します。
+      * 「Vision偏愛」を避け、記事数が最も少ない戦略的ハブ（例: `solutions/index.html`）を次のターゲットとして選定します。
+  * **詳細記事の企画・生成 (`agent_04`, `agent_03`):**
+      * 選定されたハブを補強するため、AIが**3件の新しい詳細記事**を企画・生成します。
+  * **自動内部リンク構築 (WBS 5.5/5.6):**
+      * AIが該当するハブページ（`solutions/index.html`）を自動でスキャンし、**新旧すべての記事**（5+3=8件）へのリンク（目次）を含む形で\*\*ハブページを再生成（上書き）\*\*します。
+  * **計画書の更新:** `planned_articles.md` を最新の状態（全記事リスト）に更新します。
+
+### 3\. ユーティリティ・スクリプト
+
+  * **`main_03_inject_tags.py` (タグ挿入):**
+      * AIを使わず、`docs/` フォルダ内の全HTMLをスキャンし、GTM (`GTM-XXXXXXX`) および AdSense (`ca-pub-...`) タグを`<head>`と`<body>`の正しい位置に効率的に挿入（または修正）します。
+  * **`main_04_generate_sitemap.py` (SEO):**
+      * `planned_articles.md`（全体計画）を読み込み、Googleに通知するための `sitemap.xml` を `docs/` フォルダに自動生成します。
+
+-----
+
+## 🚀 実行ワークフロー (Usage)
+
+### ステップ1: セットアップ
+
+1.  **リポジトリのクローン:**
+    ```bash
+    git clone https://github.com/LOU-Ark/MySiteGen-Agent.git
+    cd MySiteGen-Agent
+    ```
+2.  **依存関係のインストール:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  **理念の定義:**
+      * `config/opinion.txt` を開き、あなたの核となる理念や哲学を記述します。
+4.  **APIキーの設定 (Colab):**
+      * Colabの「シークレット」（鍵アイコン）に以下を設定します。
+          * `GEMINI_API_KEY`: （あなたのGoogle AI APIキー）
+          * `GITHUB_PAT`: （GitHubへのPush時に使用するアクセストークン）
+
+### ステップ2: 初回サイト構築 (main\_01)
+
+以下のコマンドを実行します。
 
 ```bash
-pip install google-generative-ai beautifulsoup4 pandas
+%run main_01_initial_build.py
 ```
 
-## インストールとセットアップ手順
+  * `「1: 法人」か「2: 個人」か`を尋ねられます。
+  * AIがサイト名（例: `anima-cognita-portfolio`）を決定し、`output_website/anima-cognita-portfolio/` にHTMLサイト（骨格）を生成します。
 
-1.  **リポジトリをクローンします:**
+### ステップ3: デプロイ準備 (docs/ への移動)
 
-    ```bash
-    git clone https://github.com/LOU-Ark/hp-generation-agent.git
-    cd hp-generation-agent
-    ```
+AIが生成したサイトを、GitHub Pages公開用の `docs` フォルダに移動させます。
+（`anima-cognita-portfolio` の部分は、`main_01` のログに出力された実際のスラッグ名に置き換えてください）
 
-2.  **依存関係をインストールします:**
+```bash
+# 既存のdocsがあれば削除
+!rm -rf docs
 
-    ```bash
-    pip install -r requirements.txt # requirements.txt が存在しない場合は、上記の依存関係を記載したファイルを作成してください
-    ```
-
-3.  **Google Gemini APIのセットアップ:**
-
-      * Google AI StudioからAPIキーを取得します。
-
-      * 環境変数 `GOOGLE_API_KEY` を設定します：
-
-        ```bash
-        export GOOGLE_API_KEY="YOUR_API_KEY"
-        ```
-
-4.  **エージェントの設定（オプション）:**
-
-      * `config/` ディレクトリにある `opinion.txt` ファイルを修正し、法人格生成のための初期インプットを提供します。
-
-## 使用例とAPIドキュメント
-
-各エージェントの使用例は以下の通りです：
-
-**1. 法人格の生成 (agent\_01\_identity.py):**
-
-```python
-import os
-import google.generativeai as genai
-from agents import agent_01_identity
-
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
-client = model.start_chat(history=[])
-
-with open("config/opinion.txt", "r") as f:
-    raw_input = f.read()
-
-identity = agent_01_identity.generate_corporate_identity(client, raw_input)
-print(identity)
+# AIが生成したサイトを 'docs' にリネーム（移動）
+!mv output_website/anima-cognita-portfolio docs
 ```
 
-**2. 戦略の生成 (agent\_02\_strategy.py):**
+### ステップ4: GTM/AdSenseタグの挿入 (main\_03)
 
-```python
-import os
-import google.generativeai as genai
-from agents import agent_02_strategy
+`docs/` フォルダ内の全HTMLに、計測タグとAdSense審査コードを挿入します。
 
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
-client = model.start_chat(history=[])
-
-# 'identity'が前のステップで生成されていると仮定
-sitemap = agent_02_strategy.generate_final_sitemap(client, identity)
-print(sitemap)
+```bash
+%run main_03_inject_tags.py
 ```
 
-**3. HTMLの生成 (agent\_03\_generation.py):**
+  * `GTM-XXXXXXX` IDの入力を求められます。
+  * `ca-pub-...` IDの入力を求められます。
 
-```python
-import os
-import google.generativeai as genai
-from agents import agent_03_generation
+### ステップ5: サイトマップの生成 (main\_04)
 
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
-client = model.start_chat(history=[])
+公開サイト用の `sitemap.xml` を生成します。
 
-# 'identity' と 'sitemap' が前のステップで生成されていると仮定
-
-# ページリストの例
-page_list = [
-    {"title": "Homepage", "file_name": "index.html"},
-    {"title": "About Us", "file_name": "about.html"}
-]
-
-# ターゲットページの詳細 (page_listに含まれていることを確認)
-target_page = {"title": "Homepage", "file_name": "index.html"}
-strategy_full = sitemap # Markdown形式
-
-html_content = agent_03_generation.generate_single_page_html(client, target_page, identity, strategy_full, page_list, GTM_ID="YOUR_GTM_ID")
-print(html_content)
-
-# 出力をファイルに保存
-with open(target_page['file_name'], "w") as f:
-    f.write(html_content)
+```bash
+%run main_04_generate_sitemap.py
 ```
 
-**4. コンテンツの改善 (agent\_04\_improvement.py):**
+### ステップ6: GitHubへの初回Push
 
-```python
-import os
-from agents import agent_04_improvement
+`docs/` フォルダと、レポート、スクリプトの変更をGitHubにPushします。
 
-# 使用例:
-file_path = "index.html"  # 分析したいHTMLファイルのパス
-analysis = agent_04_improvement.analyze_article_structure(file_path)
-print(analysis)
-
-# 改善のための潜在的な使用例（上記のようにGeminiのセットアップが必要）
-# improved_content = agent_04_improvement.improve_article_content(client, file_path, identity)
+```bash
+# (Git Push用スクリプトを実行し、GitHub Pagesで /docs フォルダを公開設定)
 ```
 
-## 設定オプション
+### ステップ7: 改善サイクルの実行 (main\_02)
 
-  * **`GOOGLE_API_KEY` 環境変数:** あなたのGoogle Gemini APIキー。
-  * **`opinion.txt`:** 法人格生成プロセスのための初期インプット。
-  * **`GTM_ID`:** Google Tag Manager ID（オプション）。生成されるHTMLにGTMスニペットを自動的に挿入します。
+サイトのコンテンツを（例: 3記事ずつ）循環的に追加・改善します。
 
-## コントリビューション（貢献）ガイドライン
+```bash
+%run main_02_improvement_cycle.py
+```
 
-コントリビューションを歓迎します！貢献するには：
+  * AIが「戦略的バランス」に基づき、記事が少ないセクション（例: `insights/`）を選定します。
+  * `docs/insights/` に3件の**新規記事**が生成されます。
+  * `docs/insights/index.html` が**自動更新**され、新規記事への内部リンクが追加されます。
+  * `output_reports/planned_articles.md` が更新されます。
 
-1.  リポジトリをフォーク（Fork）します。
-2.  機能追加またはバグ修正のための新しいブランチを作成します。
-3.  変更を加えます。
-4.  プルリクエスト（Pull Request）を送信します。
+### ステップ8: 改善のPush
 
-コードが既存のスタイルに準拠し、適切なテストが含まれていることを確認してください。
+ステップ7の変更（`docs/` と `output_reports/`）を `git push` して、公開サイトに反映させます。
+
+-----
+
+## ディレクトリ構造
+
+```
+MySiteGen-Agent/
+│
+├── main_01_initial_build.py      # (実行) 1. 初回構築エージェント
+├── main_02_improvement_cycle.py  # (実行) 2. 改善・記事追加エージェント
+├── main_03_inject_tags.py        # (実行) 3. GTM/AdSenseタグ挿入
+├── main_04_generate_sitemap.py   # (実行) 4. sitemap.xml 生成
+│
+├── config/
+│   └── opinion.txt               # (入力) 1. あなたの「理念」
+│
+├── agents/
+│   ├── agent_01_identity.py      # (AI頭脳) アイデンティティ生成 (法人/個人)
+│   ├── agent_02_strategy.py      # (AI頭脳) サイトマップ・戦略生成 (法人/個人)
+│   ├── agent_03_generation.py    # (AI頭脳) HTML生成 (フッター切替, GTM/AdSense)
+│   └── agent_04_improvement.py   # (AI頭脳) サイト分析, 優先度決定, 記事企画
+│
+├── utils/
+│   ├── analysis_utils.py         # (補助) ダミーデータ生成
+│   └── file_utils.py             # (補助) MD/計画ファイルの読込/保存
+│
+├── output_reports/
+│   ├── 01_identity.md            # (出力) AIが生成したアイデンティティ
+│   ├── 02_sitemap.md             # (出力) AIが生成したサイトマップ
+│   ├── 03_content_strategy.md    # (出力) AIが生成した戦略
+│   ├── 04_target_pages_list.json # (出力) AIが生成したハブリスト
+│   └── planned_articles.md       # (出力) サイト全体の最終計画書 (随時更新)
+│
+├── docs/
+│   ├── index.html                # (出力) 公開サイト本体 (旧 output_website)
+│   ├── vision/
+│   │   └── index.html
+│   │   └── article-1.html ...
+│   ├── solutions/
+│   │   └── ...
+│   ├── robots.txt                # (出力) SEO用
+│   └── sitemap.xml               # (出力) SEO用
+│
+├── notebooks/
+│   ├── 1_Initial_Build.ipynb     # (Jupyter) main_01 の実行ノート
+│   └── 2_Improvement_Cycle.ipynb # (Jupyter) main_02 の実行ノート
+│
+├── requirements.txt              # 依存ライブラリ
+└── README.md                     # (このファイル)
+```
 
 ## ライセンス情報
-このプロジェクトは [MITライセンス](LICENSE) の下で公開されています。
+
+このプロジェクトは [MITライセンス](https://www.google.com/search?q=LICENSE) の下で公開されています。
+（`LICENSE` ファイルをリポジトリのルートに配置してください）
 
 ## 謝辞
 
   * Google AI (Gemini API)
-  * 不可欠なライブラリを提供してくれたPythonコミュニティ
+  * Pythonコミュニティ
