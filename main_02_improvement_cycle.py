@@ -22,8 +22,11 @@ from utils.file_utils import (
 from utils.analysis_utils import create_placeholder_data
 
 # --- 0. 設定 ---
-BASE_DIR = "docs"
-REPORTS_DIR = "output_reports"
+# ⬇️ [修正] 画像のディレクトリ構造 'reports/' をパスに追加
+BASE_DIR = os.path.join("reports", "docs")
+REPORTS_DIR = os.path.join("reports", "output_reports")
+# ⬆️ [修正] 
+
 REPORT_FILE = os.path.join(REPORTS_DIR, "planned_articles.md")
 DEFAULT_ARTICLE_COUNT = 3
 
@@ -49,7 +52,7 @@ def load_corporate_identity():
     """
     'main_01' が保存した法人格レポートをファイルから読み込む。
     """
-    identity_file = os.path.join(REPORTS_DIR, "01_corporate_identity.md")
+    identity_file = os.path.join(REPORTS_DIR, "01_identity.md")
     try:
         with open(identity_file, 'r', encoding='utf-8') as f:
             identity = f.read()
@@ -136,22 +139,29 @@ def main():
     balance_report = "| ハブページ | 配下の詳細記事数 |\n| :--- | :--- |\n"
     print("✅ 現在のサイトバランス:")
     for hub, count in hub_counts.items():
-        # ユーティリティページはレポートから除外
-        if 'legal/' not in hub and 'contact/' not in hub and 'about-us/' not in hub:
-             balance_report += f"| {hub} | {count} |\n"
-             print(f"  - {hub}: {count} 件")
-    # ⬆️ [修正] ここまで
+        # ユーティリティページと 'projects/' はレポートから除外
+        if 'legal/' not in hub and 'contact/' not in hub and 'about-us/' not in hub and 'projects/' not in hub:
+            balance_report += f"| {hub} | {count} |\n"
+            print(f"  - {hub}: {count} 件")
 
-    # --- 5b. 戦略的優先度の決定 ---
+# --- 5b. 戦略的優先度の決定 ---
     print("\n--- [フェーズ5b: 戦略的優先度の決定] AIが分析中 ---")
-    df_all_data = create_placeholder_data(processed_articles)
-    
+
+    # ⬇️ [追加] AIの分析対象から 'projects/' セクションを除外
+    analysis_target_articles = [
+        p for p in processed_articles 
+        if not p.get('file_name', '').startswith('projects/')
+    ]
+    print(f"\nℹ️ 'projects/' セクションを除外し、{len(analysis_target_articles)}件を分析対象とします。")
+
+    df_all_data = create_placeholder_data(analysis_target_articles) # ⬅️ [修正]
+
     # ⬇️ [修正] 'balance_report' を引数として渡す
     priority_result = select_priority_section_by_data(
         gemini_client, 
         df_all_data, 
         CORPORATE_IDENTITY, 
-        processed_articles,
+        analysis_target_articles, # ⬅️ [修正]
         balance_report # ⬅️ バランスレポートを渡す
     )
 

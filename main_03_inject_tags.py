@@ -4,7 +4,22 @@ import re
 from bs4 import BeautifulSoup
 
 # --- 0. 設定 ---
-BASE_DIR = "docs"
+# ⬇️ [修正] スクリプト自身の場所を基準にした相対パスに変更
+try:
+    # スクリプトファイル自身の絶対パスを取得
+    # (例: /content/MySiteGen-Agent/main_03_inject_tags.py)
+    SCRIPT_PATH = os.path.realpath(__file__)
+except NameError:
+    # Colabの対話環境などで __file__ が未定義の場合のフォールバック
+    SCRIPT_PATH = os.getcwd()
+
+# スクリプトが置かれているディレクトリを取得 (例: /content/MySiteGen-Agent)
+SCRIPT_DIR = os.path.dirname(SCRIPT_PATH)
+
+# 探したい 'docs' フォルダのパスを構築
+# (例: /content/MySiteGen-Agent + reports + docs)
+BASE_DIR = os.path.join(SCRIPT_DIR, "reports", "docs")
+# ⬆️ [修正] "output" ではなく "reports" を経由
 
 # (GTMとAdSenseのテンプレート定義は変更なし)
 # GTMスニペットのテンプレート
