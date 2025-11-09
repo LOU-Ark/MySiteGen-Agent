@@ -91,8 +91,14 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
     - **必ず** `\n```eof` で出力を完全に終了してください。（コードブロックは```htmlで開始してください）
 
     ### 必須要件 (CRITICAL REQUIREMENTS)
-    1.  **デザインフレームの維持:** デザイン（配色、フォント、Tailwind CSS）を完全に維持してください。
-    2.  **ナビゲーションの統合:** ヘッダーとフッターのリンクには、**ファイル名（例: vision/index.html）を正確に**使用してください。
+    1.  **デザインフレームの維持:** ...
+    2.  **ナビゲーションの統合（最重要）:**
+        - このページのファイルパスは `{target_filename}` です。
+        - 他のページへのリンク（例: ヘッダー、フッター）は、このパスからの**正しい相対パス**で生成する必要があります。
+        - (例1) `{target_filename}` が `insights/page.html` の場合、ルートの `index.html` へのリンクは `href="../index.html"` となります。
+        - (例2) `{target_filename}` が `insights/page.html` の場合、`vision/index.html` へのリンクは `href="../vision/index.html"` となります。
+        - (例3) `{target_filename}` が `index.html` （ルート）の場合、`vision/index.html` へのリンクは `href="vision/index.html"` となります。
+        - 渡された「確定した全ページリスト」に基づき、すべてのナビゲーションリンクをこのルールで生成してください。
     3.  **コンテンツの役割:** {content_instruction}
     4.  **Tailwind CSS:** CDNをロードし、全てのスタイリングにTailwindクラスを使用してください。
     {gtm_instructions}
