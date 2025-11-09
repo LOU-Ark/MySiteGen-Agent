@@ -23,8 +23,8 @@ from utils.analysis_utils import create_placeholder_data
 
 # --- 0. 設定 ---
 # ⬇️ [修正] 画像のディレクトリ構造 'reports/' をパスに追加
-BASE_DIR = os.path.join("reports", "docs")
-REPORTS_DIR = os.path.join("reports", "output_reports")
+BASE_DIR = os.path.join("output", "docs")
+REPORTS_DIR = os.path.join("output", "output_reports")
 # ⬆️ [修正] 
 
 REPORT_FILE = os.path.join(REPORTS_DIR, "planned_articles.md")
@@ -92,9 +92,15 @@ def main():
         processed_articles = load_markdown_table_to_list(REPORT_FILE)
 
     if processed_articles:
+        # ⬇️ [追加] Markdownの仕切り線 (':---') を除外する
+        processed_articles = [
+            row for row in processed_articles 
+            if not row.get('file_name', '').startswith(':---')
+        ]
+        # ⬆️ [追加]
         print(f"✅ 既存の計画ファイルから {len(processed_articles)} 件の目的を読み込みました。（APIコールをスキップ）")
     else:
-        # (フォールバック)
+       # (フォールバック)
         print(f"⚠️ 計画ファイルが見つからないか、読み込みに失敗しました。")
         print(f"--- [フェーズ5a 代替] 既存サイト ({BASE_DIR}) をスキャン中 ---")
         processed_articles = []

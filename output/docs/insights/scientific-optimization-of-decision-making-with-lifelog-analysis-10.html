@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-N98QFDGW');</script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ライフログ分析による意思決定の科学的最適化：データで乗り越える認知バイアスとQOL向上の実践ガイド</title>
+<meta content="日常の睡眠、食事、運動データを活用し、個人の意思決定に潜む認知バイアスを特定・克服するデータサイエンス的手法を解説。Pythonを用いた時系列分析から、QOLを最大化する具体的なアクションプランまで、科学的根拠に基づいた自己最適化のロードマップを提示します。" name="description"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Noto+Sans+JP:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .code-block {
+            background-color: #2d3748; /* gray-800 */
+            color: #e2e8f0; /* gray-300 */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        .code-block .token.comment,
+        .code-block .token.prolog,
+        .code-block .token.doctype,
+        .code-block .token.cdata {
+            color: #a0aec0; /* gray-500 */
+        }
+        .code-block .token.punctuation {
+            color: #cbd5e0; /* gray-400 */
+        }
+        .code-block .token.property,
+        .code-block .token.tag,
+        .code-block .token.boolean,
+        .code-block .token.number,
+        .code-block .token.constant,
+        .code-block .token.symbol,
+        .code-block .token.deleted {
+            color: #fabfb7; /* red-200 */
+        }
+        .code-block .token.selector,
+        .code-block .token.attr-name,
+        .code-block .token.string,
+        .code-block .token.char,
+        .code-block .token.builtin,
+        .code-block .token.inserted {
+            color: #a7f3d0; /* green-200 */
+        }
+        .code-block .token.operator,
+        .code-block .token.entity,
+        .code-block .token.url,
+        .language-css .token.string,
+        .style .token.string {
+            color: #fbd38d; /* orange-200 */
+        }
+        .code-block .token.atrule,
+        .code-block .token.attr-value,
+        .code-block .token.keyword {
+            color: #90cdf4; /* blue-300 */
+        }
+        .code-block .token.function,
+        .code-block .token.class-name {
+            color: #faf089; /* yellow-200 */
+        }
+        .code-block .token.regex,
+        .code-block .token.important,
+        .code-block .token.variable {
+            color: #f9a8d4; /* pink-300 */
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-gray-800"><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript>
+<!-- Header -->
+<header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50" x-data="{ open: false }">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<div class="flex-shrink-0">
+<a class="text-xl font-bold text-gray-900" href="../index.html" title="Home">
+                        データ駆動型QOL最適化
+                    </a>
+</div>
+<div class="hidden md:block">
+<nav class="flex items-center space-x-8">
+<a class="text-gray-600 hover:text-indigo-600 transition-colors" href="../index.html">ホーム</a>
+<a class="text-gray-600 hover:text-indigo-600 transition-colors" href="../about/index.html">私について</a>
+<a aria-current="page" class="text-indigo-600 font-semibold" href="index.html">知見</a>
+<a class="text-gray-600 hover:text-indigo-600 transition-colors" href="../philosophy/index.html">哲学</a>
+<a class="text-gray-600 hover:text-indigo-600 transition-colors" href="../projects/index.html">実績</a>
+<a class="text-gray-600 hover:text-indigo-600 transition-colors" href="../contact/index.html">お問い合わせ</a>
+</nav>
+</div>
+<div class="md:hidden">
+<button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+<span class="sr-only">メインメニューを開く</span>
+<svg aria-hidden="true" class="block h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" x-show="!open" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<svg aria-hidden="true" class="block h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" x-show="open" xmlns="http://www.w3.org/2000/svg">
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+<div class="md:hidden" x-show="open" x-transition="">
+<div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+<a class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50" href="../index.html">ホーム</a>
+<a class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50" href="../about/index.html">私について</a>
+<a aria-current="page" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-700 bg-indigo-50" href="index.html">知見</a>
+<a class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50" href="../philosophy/index.html">哲学</a>
+<a class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50" href="../projects/index.html">実績</a>
+<a class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50" href="../contact/index.html">お問い合わせ</a>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="py-12 sm:py-16">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<article class="prose lg:prose-lg xl:prose-xl max-w-none" style="--tw-prose-bullets: #4f46e5; --tw-prose-links: #4f46e5;">
+<!-- Article Header -->
+<header class="mb-12">
+<div class="space-y-4">
+<div class="flex items-center space-x-4 text-sm text-gray-500">
+<span>2023年10月26日</span>
+<span class="text-gray-300">|</span>
+<a class="hover:text-indigo-600 transition-colors" href="index.html">データサイエンス</a>
+</div>
+<h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 leading-tight">
+                            ライフログ分析による意思決定の科学的最適化：データで乗り越える認知バイアスとQOL向上の実践ガイド
+                        </h1>
+<p class="text-lg md:text-xl text-gray-600 leading-relaxed">
+                            日常の睡眠、食事、運動データを活用し、個人の意思決定に潜む認知バイアスを特定・克服するデータサイエンス的手法を解説。Pythonを用いた時系列分析から、QOLを最大化する具体的なアクションプランまで、科学的根拠に基づいた自己最適化のロードマップを提示します。
+                        </p>
+</div>
+</header>
+<figure class="mb-12">
+<img alt="Data analysis charts and graphs on a screen" class="rounded-lg shadow-xl w-full" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=1470&amp;q=80"/>
+<figcaption class="text-center text-sm text-gray-500 mt-2">データは、私たちの直感という霧を晴らす客観的な羅針盤となり得る。</figcaption>
+</figure>
+<!-- Article Body -->
+<div class="space-y-8 text-lg leading-relaxed text-gray-700">
+<section>
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">はじめに：なぜ「直感」だけでは不十分なのか？</h2>
+<p>私たちは日々、無数の意思決定を行っています。何を食べるか、いつ寝るか、どのタスクを優先するか。その多くは直感や経験則、つまりダニエル・カーネマンの言う「システム1」に依存しています。しかし、この高速で効率的な思考システムは、「確証バイアス」や「最新性バイアス」といった認知バイアスの影響を強く受けます。結果として、私たちは自身のQOL（Quality of Life）を最大化する選択を逃しているかもしれません。</p>
+<p>本稿では、ウェアラブルデバイスやスマートフォンアプリから得られる「ライフログデータ」を活用し、これらのバイアスを科学的に特定・克服する実践的な手法を解説します。データという客観的な鏡を通して自己を深く理解し、より合理的で最適な意思決定を下すためのロードマップを、具体的なPythonコードと共に示します。</p>
+</section>
+<section>
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">ステップ1：データ収集 - 自己を定量化する</h2>
+<p>自己最適化の旅は、信頼できるデータを集めることから始まります。重要なのは、複数の側面から自己をトラッキングし、それらを関連付けて分析できるようにすることです。以下は一般的なデータソースの例です。</p>
+<ul class="list-disc pl-5 space-y-2">
+<li><strong>身体活動・睡眠：</strong> Ouraリング, Apple Watch, Fitbitなど。睡眠時間、睡眠の質（深い睡眠、レム睡眠）、心拍数、歩数などを自動で記録します。</li>
+<li><strong>食事：</strong> MyFitnessPal, あすけんなど。摂取カロリー、マクロ栄養素（PFCバランス）を手動で記録します。</li>
+<li><strong>生産性・気分：</strong> Toggl (時間追跡), RescueTime (PC利用時間), Daylio (気分ログ)。どのタスクにどれだけ時間を使っているか、日々の気分の変動を記録します。</li>
+</ul>
+<p>重要なのは、完璧さよりも継続性です。まずは1〜2種類のデータから始め、習慣化することを目指しましょう。</p>
+</section>
+<section>
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">ステップ2：Pythonによる時系列分析 - バイアスの可視化</h2>
+<p>データが集まったら、次はその中に潜むパターンと相関関係を探ります。ここでは、多くのデータサイエンティストが利用するプログラミング言語Pythonと、そのライブラリであるpandas, matplotlib, seabornを使ってみましょう。</p>
+<p><strong>シナリオ：</strong> ある開発者が「睡眠時間と翌日の集中力には関係があるはずだ」という仮説を検証したいと考えています。</p>
+<p>まず、収集したデータ（睡眠時間と、主観的に評価した集中力スコア）をCSVファイルから読み込み、散布図で可視化します。</p>
+<pre class="code-block"><code><span class="token comment"># 必要なライブラリをインポート</span>
+<span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
+<span class="token keyword">import</span> matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
+<span class="token keyword">import</span> seaborn <span class="token keyword">as</span> sns
+
+<span class="token comment"># データの読み込み (仮のデータ)</span>
+data <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token string">'sleep_hours'</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token number">6.5</span><span class="token punctuation">,</span> <span class="token number">7.2</span><span class="token punctuation">,</span> <span class="token number">5.8</span><span class="token punctuation">,</span> <span class="token number">8.1</span><span class="token punctuation">,</span> <span class="token number">7.5</span><span class="token punctuation">,</span> <span class="token number">6.9</span><span class="token punctuation">,</span> <span class="token number">7.8</span><span class="token punctuation">,</span> <span class="token number">6.2</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token string">'focus_score'</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">,</span> <span class="token number">8</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token number">9</span><span class="token punctuation">,</span> <span class="token number">8</span><span class="token punctuation">,</span> <span class="token number">7</span><span class="token punctuation">,</span> <span class="token number">9</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+df <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span>data<span class="token punctuation">)</span>
+
+<span class="token comment"># 散布図の作成</span>
+plt<span class="token punctuation">.</span>figure<span class="token punctuation">(</span>figsize<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">6</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+sns<span class="token punctuation">.</span>regplot<span class="token punctuation">(</span>data<span class="token operator">=</span>df<span class="token punctuation">,</span> x<span class="token operator">=</span><span class="token string">'sleep_hours'</span><span class="token punctuation">,</span> y<span class="token operator">=</span><span class="token string">'focus_score'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token string">'Sleep Duration vs. Next-Day Focus Score'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span><span class="token string">'Sleep (hours)'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span><span class="token string">'Focus Score (1-10)'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>grid<span class="token punctuation">(</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>このグラフは、睡眠時間と集中力の間に正の相関があることを示唆しています。これにより、「昨日は5時間睡眠でも大丈夫だったから今日も大丈夫」という安易な判断（利用可能性ヒューリスティック）が、長期的に見るとパフォーマンスを損なう可能性をデータで示すことができます。</p>
+<p>次に、「最新性バイアス」（直近の出来事を過大評価する傾向）を克服するために、移動平均を用いてデータのトレンドを可視化します。</p>
+<pre class="code-block"><code><span class="token comment"># 日付データも追加したと仮定</span>
+df<span class="token punctuation">[</span><span class="token string">'date'</span><span class="token punctuation">]</span> <span class="token operator">=</span> pd<span class="token punctuation">.</span>to_datetime<span class="token punctuation">(</span>pd<span class="token punctuation">.</span>date_range<span class="token punctuation">(</span>start<span class="token operator">=</span><span class="token string">'2023-10-01'</span><span class="token punctuation">,</span> periods<span class="token operator">=</span>len<span class="token punctuation">(</span>df<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+df <span class="token operator">=</span> df<span class="token punctuation">.</span>set_index<span class="token punctuation">(</span><span class="token string">'date'</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 7日間の移動平均を計算</span>
+df<span class="token punctuation">[</span><span class="token string">'focus_rolling_avg'</span><span class="token punctuation">]</span> <span class="token operator">=</span> df<span class="token punctuation">[</span><span class="token string">'focus_score'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>rolling<span class="token punctuation">(</span>window<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">.</span>mean<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 時系列プロット</span>
+plt<span class="token punctuation">.</span>figure<span class="token punctuation">(</span>figsize<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">12</span><span class="token punctuation">,</span> <span class="token number">6</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>df<span class="token punctuation">.</span>index<span class="token punctuation">,</span> df<span class="token punctuation">[</span><span class="token string">'focus_score'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> marker<span class="token operator">=</span><span class="token string">'o'</span><span class="token punctuation">,</span> linestyle<span class="token operator">=</span><span class="token string">'--'</span><span class="token punctuation">,</span> label<span class="token operator">=</span><span class="token string">'Daily Score'</span><span class="token punctuation">,</span> alpha<span class="token operator">=</span><span class="token number">0.6</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>df<span class="token punctuation">.</span>index<span class="token punctuation">,</span> df<span class="token punctuation">[</span><span class="token string">'focus_rolling_avg'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> marker<span class="token operator">=</span><span class="token string">''</span><span class="token punctuation">,</span> linestyle<span class="token operator">=</span><span class="token string">'-'</span><span class="token punctuation">,</span> label<span class="token operator">=</span><span class="token string">'3-Day Rolling Average'</span><span class="token punctuation">,</span> color<span class="token operator">=</span><span class="token string">'red'</span><span class="token punctuation">,</span> linewidth<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token string">'Focus Score Trend Analysis'</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>legend<span class="token punctuation">(</span><span class="token punctuation">)</span>
+plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>このグラフは、日々のスコアの変動（ノイズ）の背後にある長期的な傾向を明らかにします。たとえ直近の1〜2日が良いスコアだったとしても、移動平均線が下降傾向にあれば、生活習慣に何らかの問題がある可能性を示唆します。これにより、短期的な感情に流されず、長期的な視点での意思決定が可能になります。</p>
+</section>
+<section>
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">ステップ3：自己A/Bテストによる行動変容</h2>
+<p>データから洞察を得たら、次に行動を変えるための実験を行います。ここでは、ウェブサイト最適化などで使われる「A/Bテスト」の手法を個人に応用します。</p>
+<p><strong>仮説：</strong>「朝10分間の瞑想は、午後の集中力低下を防ぐ効果があるのではないか？」</p>
+<ol class="list-decimal pl-5 space-y-2">
+<li><strong>期間設定：</strong> 実験期間を2週間に設定します。</li>
+<li><strong>A週（コントロール群）：</strong> 通常通りの生活を送ります。毎日の午後の集中力を1〜10で記録します。</li>
+<li><strong>B週（テスト群）：</strong> 毎朝10分間の瞑想を実践し、同様に午後の集中力を記録します。</li>
+<li><strong>結果分析：</strong> A週とB週の集中力スコアの平均値を比較します。統計的に有意な差が見られれば、仮説は支持されたと言えます。</li>
+</ol>
+<p>このアプローチにより、「なんとなく良さそう」という曖昧な感覚ではなく、データに基づいた効果測定が可能となり、自分にとって本当に有効な習慣を科学的に見つけ出すことができます。</p>
+</section>
+<section>
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">倫理的配慮と今後の展望</h2>
+<p>ライフログ分析は強力なツールですが、注意点も存在します。第一に、<strong>データプライバシーとセキュリティ</strong>です。個人の機微な情報を扱うため、データの保管と管理には最大限の注意を払う必要があります。第二に、<strong>過剰な最適化のリスク</strong>です。データに囚われすぎると、数値目標を達成することが目的化し、本来のQOL向上という目的を見失う可能性があります。データはあくまで意思決定を支援するツールであり、最終的な判断は自分自身が下すという意識が重要です。
+                        <p>将来的には、AIがこれらのデータをリアルタイムで解析し、個人の状況に合わせた最適な行動変容プランを提案する時代が来るでしょう。しかし、その未来においても、データリテラシーと倫理観を持ち、テクノロジーを主体的に使いこなす姿勢が、私たちのQOLを真に豊かにする鍵となります。</p>
+</p></section>
+<section>
+<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">結論：データと共に歩む自己発見の旅</h2>
+<p>ライフログ分析による意思決定の最適化は、単なる生産性向上のテクニックではありません。それは、データという客観的なレンズを通して、自分自身の身体や心の働きを深く理解し、より意図的に人生を設計していくための、現代的な「汝自身を知れ」の実践です。</p>
+<p>今日から、まずは一つの指標（例えば、睡眠時間）を記録することから始めてみませんか？その小さな一歩が、認知バイアスを乗り越え、あなた自身のQOLを最大化する科学的な旅の始まりとなるはずです。</p>
+</section>
+</div>
+</article>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-gray-800 text-white">
+<div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+<div>
+<h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">ナビゲーション</h3>
+<ul class="mt-4 space-y-4">
+<li><a class="text-base text-gray-300 hover:text-white" href="../index.html">ホーム</a></li>
+<li><a class="text-base text-gray-300 hover:text-white" href="../about/index.html">私について</a></li>
+<li><a class="text-base text-gray-300 hover:text-white" href="index.html">知見</a></li>
+<li><a class="text-base text-gray-300 hover:text-white" href="../philosophy/index.html">哲学</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">リソース</h3>
+<ul class="mt-4 space-y-4">
+<li><a class="text-base text-gray-300 hover:text-white" href="../projects/index.html">実績</a></li>
+<li><a class="text-base text-gray-300 hover:text-white" href="../contact/index.html">お問い合わせ</a></li>
+</ul>
+</div>
+<div class="col-span-2">
+<h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">コンセプト</h3>
+<p class="mt-4 text-base text-gray-300">データとAIにより個人のQOLと可能性を最大化し、倫理と透明性を担保しながら、より豊かな社会の実現に貢献します。</p>
+</div>
+</div>
+<div class="mt-8 border-t border-gray-700 pt-8 md:flex md:items-center md:justify-between">
+<div class="flex space-x-6 md:order-2">
+<!-- Social media icons placeholder -->
+<a class="text-gray-400 hover:text-gray-300" href="#">
+<span class="sr-only">X (Twitter)</span>
+<svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
+<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+</svg>
+</a>
+<a class="text-gray-400 hover:text-gray-300" href="#">
+<span class="sr-only">GitHub</span>
+<svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
+<path clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.165 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" fill-rule="evenodd"></path>
+</svg>
+</a>
+</div>
+<p class="mt-8 text-base text-gray-400 md:mt-0 md:order-1">
+                    © 2024 Quantalize Futures Inc. All rights reserved. <a class="hover:text-white" href="../legal/index.html">法務情報</a>
+</p>
+</div>
+</div>
+</footer>
+</body>
+</html>

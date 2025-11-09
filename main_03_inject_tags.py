@@ -18,7 +18,7 @@ SCRIPT_DIR = os.path.dirname(SCRIPT_PATH)
 
 # 探したい 'docs' フォルダのパスを構築
 # (例: /content/MySiteGen-Agent + reports + docs)
-BASE_DIR = os.path.join(SCRIPT_DIR, "reports", "docs")
+BASE_DIR = os.path.join(SCRIPT_DIR, "output", "docs")
 # ⬆️ [修正] "output" ではなく "reports" を経由
 
 # (GTMとAdSenseのテンプレート定義は変更なし)
