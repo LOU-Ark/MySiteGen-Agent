@@ -1,9 +1,10 @@
 import os
+import re
 import sys
 import json
 import shutil
 from google import genai
-# from IPython.display import display, Markdown # .pyファイルからは削除
+from datetime import datetime # ⬅️ 日付のために必要
 
 # モジュールをインポート
 from agents.agent_03_generation import generate_single_page_html
@@ -20,12 +21,14 @@ from utils.file_utils import (
     load_markdown_table_to_list
 )
 from utils.analysis_utils import create_placeholder_data
+# ⬇️ [追加] X Bot連携のために main_03 をインポート
+from main_03_inject_tags import main as inject_tags_main
 
 # --- 0. 設定 ---
-# ⬇️ [修正] 画像のディレクトリ構造 'reports/' をパスに追加
-BASE_DIR = os.path.join("output", "docs")
-REPORTS_DIR = os.path.join("output", "output_reports")
-# ⬆️ [修正] 
+# ⬇️ [修正] 絶対パスで指定 (実行場所エラーを防ぐため)
+PROJECT_ROOT_PATH = "/content/MySiteGen-Agent" 
+BASE_DIR = os.path.join(PROJECT_ROOT_PATH, "output", "docs")
+REPORTS_DIR = os.path.join(PROJECT_ROOT_PATH, "output", "output_reports")
 
 REPORT_FILE = os.path.join(REPORTS_DIR, "planned_articles.md")
 DEFAULT_ARTICLE_COUNT = 3
@@ -47,7 +50,6 @@ def setup_client():
         print(f"❌ クライアント初期化エラー: {e}")
         return None
 
-# ⬇️ [修正] 法人格をファイルから読み込むように変更
 def load_corporate_identity():
     """
     'main_01' が保存した法人格レポートをファイルから読み込む。
@@ -63,12 +65,15 @@ def load_corporate_identity():
         # (フォールバック)
         try:
             from agents.agent_01_identity import generate_corporate_identity
-            with open("config/opinion.txt", 'r', encoding='utf-8') as f:
+            # ⬇️ [修正] config パスの修正
+            opinion_path = os.path.join(PROJECT_ROOT_PATH, "config", "opinion.txt")
+            with open(opinion_path, 'r', encoding='utf-8') as f:
                 RAW_VISION_INPUT = f.read()
             client = setup_client()
             if client:
                 print("⚠️ [フォールバック] 法人格をAPIで再生成します。")
-                return generate_corporate_identity(client, RAW_VISION_INPUT)
+                # ⬇️ [修正] SITE_TYPE を渡す (personal と仮定)
+                return generate_corporate_identity(client, RAW_VISION_INPUT, 'personal')
             else:
                 raise Exception("クライアントの初期化に失敗")
         except Exception as e_fallback:
@@ -85,6 +90,13 @@ def main():
     # --- (前提) 法人格の取得 ---
     CORPORATE_IDENTITY = load_corporate_identity()
 
+    # --- ⬇️ [修正] SITE_TYPEの自動判定 ---
+    if "法人格" in CORPORATE_IDENTITY or "corporate" in CORPORATE_IDENTITY:
+        SITE_TYPE = 'corporate'
+    else:
+        SITE_TYPE = 'personal'
+    print(f"✅ サイトタイプを '{SITE_TYPE}' と自動判定しました。")
+
     # --- 5a. 戦略（AS-IS分析）---
     print(f"\n--- [フェーズ5a: AS-IS分析] 計画ファイル ({REPORT_FILE}) を読み込み中 ---")
     processed_articles = None
@@ -92,12 +104,11 @@ def main():
         processed_articles = load_markdown_table_to_list(REPORT_FILE)
 
     if processed_articles:
-        # ⬇️ [追加] Markdownの仕切り線 (':---') を除外する
+        # ⬇️ [修正] Markdownの仕切り線 (':---') を除外
         processed_articles = [
             row for row in processed_articles 
             if not row.get('file_name', '').startswith(':---')
         ]
-        # ⬆️ [追加]
         print(f"✅ 既存の計画ファイルから {len(processed_articles)} 件の目的を読み込みました。（APIコールをスキップ）")
     else:
        # (フォールバック)
@@ -108,6 +119,10 @@ def main():
         if not os.path.isdir(BASE_DIR):
             print(f"❌ 分析対象ディレクトリ {BASE_DIR} が見つかりません。")
             sys.exit(1)
+        
+        # ⬇️ [修正] 日付追加
+        current_time_iso = datetime.now().isoformat()
+        
         for root, _, files in os.walk(BASE_DIR):
             for filename in files:
                 if filename.lower().endswith(TARGET_EXTENSIONS):
@@ -118,57 +133,51 @@ def main():
                         processed_articles.append({
                             "file_name": os.path.relpath(full_path, BASE_DIR).replace(os.path.sep, '/'),
                             "title": article_data['page_title'],
-                            "summary": purpose # ⬅️ [修正] 'summary' キーで保存
+                            "summary": purpose,
+                            "created_at": current_time_iso, # ⬅️ [追加]
+                            "updated_at": "" # ⬅️ [追加]
                         })
         print(f"\n✅ [フェーズ5a 代替完了] 合計 {len(processed_articles)} 件の目的をAPIで再定義しました。")
-        
-    # ⬇️ [修正] 5a-2. 「戦略的バランス」の数値化
+    
+    # 5a-2. 「戦略的バランス」の数値化 (変更なし)
     print(f"\n--- [フェーズ5a-2: 戦略的バランスの分析] ---")
     hub_counts = {}
-    all_hubs = []
-    
-    # 1. ハブを特定
     for p in processed_articles:
         if p.get('file_name', '').endswith('index.html'):
-            hub_counts[p['file_name']] = 0 # カウントを0で初期化
-            all_hubs.append(p['file_name'])
-
-    # 2. ハブ配下の記事をカウント
+            hub_counts[p['file_name']] = 0
     for p in processed_articles:
         if not p.get('file_name', '').endswith('index.html'):
             parent_dir = os.path.dirname(p.get('file_name', ''))
             parent_hub = os.path.join(parent_dir, 'index.html').replace(os.path.sep, '/')
             if parent_hub in hub_counts:
                 hub_counts[parent_hub] += 1
-    
-    # 3. AIに渡すためのバランスレポートを作成
     balance_report = "| ハブページ | 配下の詳細記事数 |\n| :--- | :--- |\n"
     print("✅ 現在のサイトバランス:")
     for hub, count in hub_counts.items():
-        # ユーティリティページと 'projects/' はレポートから除外
-        if 'legal/' not in hub and 'contact/' not in hub and 'about-us/' not in hub and 'projects/' not in hub:
-            balance_report += f"| {hub} | {count} |\n"
-            print(f"  - {hub}: {count} 件")
+        if 'legal/' not in hub and 'contact/' not in hub and 'projects/' not in hub:
+             # 'about-us/' はあなたのサイトに存在しないため削除 (about/ に修正)
+             if 'about/' not in hub:
+                balance_report += f"| {hub} | {count} |\n"
+                print(f"  - {hub}: {count} 件")
 
-# --- 5b. 戦略的優先度の決定 ---
+    # --- 5b. 戦略的優先度の決定 ---
     print("\n--- [フェーズ5b: 戦略的優先度の決定] AIが分析中 ---")
 
-    # ⬇️ [追加] AIの分析対象から 'projects/' セクションを除外
+    # [修正] 'projects/' セクションを除外 (変更なし)
     analysis_target_articles = [
         p for p in processed_articles 
         if not p.get('file_name', '').startswith('projects/')
     ]
     print(f"\nℹ️ 'projects/' セクションを除外し、{len(analysis_target_articles)}件を分析対象とします。")
 
-    df_all_data = create_placeholder_data(analysis_target_articles) # ⬅️ [修正]
-
-    # ⬇️ [修正] 'balance_report' を引数として渡す
+    df_all_data = create_placeholder_data(analysis_target_articles) 
+    
     priority_result = select_priority_section_by_data(
         gemini_client, 
         df_all_data, 
         CORPORATE_IDENTITY, 
-        analysis_target_articles, # ⬅️ [修正]
-        balance_report # ⬅️ バランスレポートを渡す
+        analysis_target_articles,
+        balance_report 
     )
 
     priority_file = priority_result['file_name']
@@ -180,9 +189,18 @@ def main():
 
     # --- 6. 詳細記事の企画 ---
     print("\n--- [フェーズ6: 詳細記事の企画] AIが企画中 ---")
-    start_number = get_existing_article_count(BASE_DIR) + 1
     
-    # ⬇️ [修正] 'summary' キーを持つ辞書を渡す
+    # ⬇️ [修正] サイト全体の記事から通し番号を取得
+    max_article_num = 0
+    for p in processed_articles:
+        match = re.search(r'-(\d+)\.html$', p.get('file_name', ''))
+        if match:
+            num = int(match.group(1))
+            if num > max_article_num:
+                max_article_num = num
+    start_number = max_article_num + 1
+    print(f"ℹ️ 次の記事番号は {start_number} から開始します。")
+    
     error_msg, article_plans = generate_priority_article_titles(
         gemini_client, priority_section_info, CORPORATE_IDENTITY, DEFAULT_ARTICLE_COUNT, start_number
     )
@@ -192,18 +210,24 @@ def main():
         sys.exit(1)
 
     print(f"✅ [フェーズ6 完了] {len(article_plans)} 件の新規記事を企画しました。")
+    
+    # --- ⬇️ [修正] 新規記事に作成日を追加 ---
+    current_time_iso = datetime.now().isoformat()
+    for plan in article_plans:
+        plan['created_at'] = current_time_iso
+        plan['updated_at'] = "" 
 
     # --- 7. (本番) 詳細記事のHTML生成 ---
     print("\n--- [フェーズ7: 詳細記事のHTML生成] ---")
 
-    new_article_files_generated = []
+    new_article_files_generated = [] # X Bot 連携用に変更
 
     for i, plan in enumerate(article_plans):
         target_dir = os.path.dirname(priority_section_info['file_name'])
         file_name = os.path.join(target_dir, plan.get('file_name', f'error-slug-{i}.html'))
         file_name = file_name.replace(os.path.sep, '/')
 
-        article_plans[i]['file_name'] = file_name
+        article_plans[i]['file_name'] = file_name 
 
         print(f"\n--- 🏭 [本番生成] {plan['title']} ---")
 
@@ -227,7 +251,9 @@ def main():
             CORPORATE_IDENTITY,
             None,
             nav_list_for_generation,
-            retry_attempts=3
+            SITE_TYPE=SITE_TYPE, # ⬅️ [修正] 
+            retry_attempts=3,
+            article_date=plan['created_at'] # ⬅️ [修正] 
         )
 
         if "❌" not in final_html_code:
@@ -237,7 +263,7 @@ def main():
                 with open(generate_file_path, 'w', encoding='utf-8') as f:
                     f.write(final_html_code)
                 print(f"✅ [本番生成] ファイル作成成功: {generate_file_path}")
-                new_article_files_generated.append(plan)
+                new_article_files_generated.append(plan) # ⬅️ [修正]
             except Exception as e:
                 print(f"❌ [本番生成] ファイル作成失敗: {e}")
         else:
@@ -250,19 +276,27 @@ def main():
 
     hub_path_to_update = priority_file
     hub_dir = os.path.dirname(hub_path_to_update)
+    
+    # ⬇️ [追加] X Bot 連携用に更新ハブを記録
+    newly_updated_hubs = []
+    current_time_iso_update = datetime.now().isoformat()
 
     print(f"🏭 {hub_path_to_update} をスキャンし、配下の全記事リンクを組み込みます。")
 
     try:
-        parent_page_info = next(p for p in all_content_plans if p['file_name'] == hub_path_to_update)
+        # ⬇️ [修正] all_content_plans からハブを探し、更新日を追加
+        parent_page_plan = next(p for p in all_content_plans if p['file_name'] == hub_path_to_update)
+        parent_page_plan['updated_at'] = current_time_iso_update
+        newly_updated_hubs.append(parent_page_plan) # ⬅️ [追加]
+        
     except StopIteration:
         print(f"❌ [ハブ更新失敗] 計画リストに親ハブ ({hub_path_to_update}) が見つかりません。")
         sys.exit(1)
 
     parent_page_info_for_regeneration = {
-        'file_name': parent_page_info['file_name'],
-        'title': parent_page_info['title'],
-        'purpose': parent_page_info.get('summary', parent_page_info.get('generated_purpose')) 
+        'file_name': parent_page_plan['file_name'],
+        'title': parent_page_plan['title'],
+        'purpose': parent_page_plan.get('summary', parent_page_plan.get('generated_purpose')) 
     }
 
     all_articles_in_section = []
@@ -281,7 +315,7 @@ def main():
             link_path = os.path.basename(plan['file_name'])
             article_summary = plan.get('summary', plan.get('generated_purpose', '')) 
             new_article_links_html += f"<li><a href='{link_path}' class='text-blue-500 hover:underline'>{plan['title']}</a>: {article_summary}</li>"
-        new_article_links_html += "</ul>"
+    new_article_links_html += "</ul>"
 
     parent_page_info_for_regeneration['purpose'] = f"""
     このページ（{parent_page_info_for_regeneration['title']}）は、以下の「{len(all_articles_in_section)}件の全詳細記事」への導線を含むハブページとして機能します。
@@ -305,7 +339,9 @@ def main():
         CORPORATE_IDENTITY,
         None,
         nav_list_for_generation,
-        retry_attempts=3
+        SITE_TYPE=SITE_TYPE, # ⬅️ [修正] 
+        retry_attempts=3,
+        article_date=current_time_iso_update # ⬅️ [修正] 
     )
 
     if "❌" not in final_hub_code:
@@ -322,11 +358,65 @@ def main():
     # --- 9. (レポート) 全体計画をMDファイルに保存 ---
     print("\n--- [最終処理: 全体計画の保存] ---")
     os.makedirs(REPORTS_DIR, exist_ok=True)
-
+    
+    # ⬇️ [修正] 日付が更新された all_content_plans を保存
     save_to_markdown(all_content_plans, REPORT_FILE)
 
     print(f"✅ 全体計画を {REPORT_FILE} に保存しました。")
+    
+    # --- ⬇️ [追加] フェーズ10: X投稿用の更新リストを保存 ---
+    print("\n--- [フェーズ10: X投稿用の更新リストを保存] ---")
+    
+    # (Growth_X_bot から読めるように、/content/ に保存)
+    output_for_x_bot = os.path.join("/content", "newly_updated_articles.json")
+    SITE_BASE_URL = "https://lou-ark.github.io/sophia-echoes/"
+    
+    articles_for_x = []
+    
+    # 1. 新規記事を追加
+    for plan in new_article_files_generated:
+        articles_for_x.append({
+            "theme": plan['title'],
+            "keywords": ["AI", "QoL", "sophia-echoes", "知見"], # キーワードは適宜設定
+            "main_url": os.path.join(SITE_BASE_URL, plan['file_name']).replace(os.path.sep, '/'),
+            "provided_summary": plan.get('summary', '記事の概要') # ⬅️ 概要を渡す
+        })
+        
+    # 2. 更新されたハブページも追加 (オプション)
+    for plan in newly_updated_hubs:
+         articles_for_x.append({
+            "theme": f"更新: {plan['title']}", # "更新: " などを付ける
+            "keywords": ["AI", "QoL", "sophia-echoes"],
+            "main_url": os.path.join(SITE_BASE_URL, plan['file_name']).replace(os.path.sep, '/'),
+            "provided_summary": plan.get('purpose', 'ハブページの概要') 
+        })
+
+    if articles_for_x:
+        try:
+            with open(output_for_x_bot, 'w', encoding='utf-8') as f:
+                json.dump(articles_for_x, f, ensure_ascii=False, indent=2)
+            print(f"✅ {len(articles_for_x)} 件の更新情報を {output_for_x_bot} に保存しました。")
+        except Exception as e:
+            print(f"❌ X投稿用リストの保存に失敗: {e}")
+    else:
+        print("ℹ️ Xに通知する新規記事・更新ハブはありませんでした。")
+
+    # --- [追加] フェーズ11: タグの自動挿入 ---
+    print("\n--- [フェーズ11: GTM/AdSense タグの自動挿入] ---")
+    print("生成・更新されたHTMLファイルにタグを挿入します...")
+    try:
+        inject_tags_main()
+    except Exception as e:
+        print(f"❌ タグ挿入プロセス中にエラーが発生しました: {e}")
+        print("ℹ️ タグを挿入する場合は、手動で %run main_03_inject_tags.py を実行してください。")
+    # --- ⬆️ [追加] ---
+
     print("--- 🔄 HP改善サイクルエージェント 完了 ---")
 
 if __name__ == "__main__":
+    # ⬇️ [修正] PythonパスにPROJECT_ROOT_PATHを追加
+    PROJECT_ROOT_PATH = "/content/MySiteGen-Agent" 
+    if PROJECT_ROOT_PATH not in sys.path:
+        sys.path.append(PROJECT_ROOT_PATH)
+    # ⬆️ [修正] 
     main()
