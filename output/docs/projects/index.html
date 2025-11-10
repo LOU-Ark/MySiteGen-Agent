@@ -9,191 +9,149 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>実績 | LOU-Ark Portfolio</title>
+<meta content="LOU-Arkが実践するデータ駆動型QOL最適化とAI倫理の実績。AIエージェントとの協働によるサイト構築や、データ分析基盤の構築など、理論を具現化したプロジェクトを紹介します。" name="description"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&amp;family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Noto+Sans+JP:wght@400;700&amp;display=swap" rel="stylesheet"/>
 <style>
         body {
-            font-family: 'Roboto', 'Noto Sans JP', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+            color: #F9FAFB; /* text-gray-50 */
         }
         .gradient-text {
-            background: linear-gradient(to right, #3b82f6, #818cf8);
+            background: linear-gradient(to right, #38bdf8, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-    </style>
-<script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-dark': '#0a0a0a',
-                        'brand-gray': '#1f2937',
-                        'brand-light-gray': '#4b5563',
-                        'brand-accent': '#3b82f6',
-                        'brand-accent-hover': '#2563eb',
-                    },
-                    animation: {
-                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
-                    },
-                    keyframes: {
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
-                    }
-                }
-            }
+        .active-nav {
+            color: #38bdf8; /* text-sky-400 */
+            font-weight: bold;
         }
-    </script>
+    </style>
 </head>
-<body class="bg-brand-dark text-gray-300"><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript>
+<body class="antialiased"><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript>
 <!-- Header -->
-<header class="bg-brand-dark/80 backdrop-blur-lg sticky top-0 z-50">
-<div class="container mx-auto px-6 py-4 flex justify-between items-center">
-<a class="text-2xl font-bold text-white tracking-wider" href="../index.html">LOU-Ark</a>
-<nav class="hidden md:flex space-x-6 items-center">
-<a class="text-gray-300 hover:text-brand-accent transition-colors" href="../index.html">ホーム</a>
-<a class="text-gray-300 hover:text-brand-accent transition-colors" href="../about/index.html">私について</a>
-<a class="text-brand-accent font-semibold" href="./index.html">実績</a>
-<a class="text-gray-300 hover:text-brand-accent transition-colors" href="../insights/index.html">知見</a>
-<a class="text-gray-300 hover:text-brand-accent transition-colors" href="../philosophy/index.html">哲学</a>
-<a class="bg-brand-accent hover:bg-brand-accent-hover text-white font-bold py-2 px-4 rounded-full transition-colors" href="../contact/index.html">お問い合わせ</a>
-</nav>
-<button class="md:hidden text-white" id="mobile-menu-button">
-<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 6h16M4 12h16m-7 6h7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<header class="bg-gray-900 bg-opacity-80 backdrop-blur-md sticky top-0 z-50" id="header">
+<nav class="container mx-auto px-6 py-4">
+<div class="flex items-center justify-between">
+<a class="text-2xl font-bold text-white" href="../index.html">LOU-Ark</a>
+<!-- Desktop Menu -->
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-gray-300 hover:text-sky-400 transition-colors" href="../index.html">ホーム</a>
+<a class="text-gray-300 hover:text-sky-400 transition-colors" href="../about/index.html">私について</a>
+<a class="text-gray-300 hover:text-sky-400 transition-colors" href="../philosophy/index.html">哲学</a>
+<a class="text-gray-300 hover:text-sky-400 transition-colors" href="../insights/index.html">知見</a>
+<a class="active-nav" href="#">実績</a>
+<a class="text-gray-300 hover:text-sky-400 transition-colors" href="../contact/index.html">お問い合わせ</a>
+</div>
+<!-- Mobile Menu Button -->
+<div class="md:hidden">
+<button class="text-white focus:outline-none" id="mobile-menu-button">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 6h16M4 12h16m-7 6h7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
 </button>
 </div>
-<!-- Mobile Menu -->
-<div class="hidden md:hidden bg-brand-gray" id="mobile-menu">
-<a class="block py-2 px-6 text-gray-300 hover:bg-brand-light-gray" href="../index.html">ホーム</a>
-<a class="block py-2 px-6 text-gray-300 hover:bg-brand-light-gray" href="../about/index.html">私について</a>
-<a class="block py-2 px-6 text-brand-accent bg-brand-light-gray font-semibold" href="./index.html">実績</a>
-<a class="block py-2 px-6 text-gray-300 hover:bg-brand-light-gray" href="../insights/index.html">知見</a>
-<a class="block py-2 px-6 text-gray-300 hover:bg-brand-light-gray" href="../philosophy/index.html">哲学</a>
-<a class="block py-2 px-6 text-gray-300 hover:bg-brand-light-gray" href="../contact/index.html">お問い合わせ</a>
 </div>
+<!-- Mobile Menu -->
+<div class="hidden md:hidden mt-4" id="mobile-menu">
+<a class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-800 rounded" href="../index.html">ホーム</a>
+<a class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-800 rounded" href="../about/index.html">私について</a>
+<a class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-800 rounded" href="../philosophy/index.html">哲学</a>
+<a class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-800 rounded" href="../insights/index.html">知見</a>
+<a class="block py-2 px-4 text-sm bg-gray-800 text-sky-400 rounded" href="#">実績</a>
+<a class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-800 rounded" href="../contact/index.html">お問い合わせ</a>
+</div>
+</nav>
 </header>
 <!-- Main Content -->
-<main class="container mx-auto px-6 py-16 md:py-24">
-<!-- Page Introduction -->
-<section class="text-center mb-16 md:mb-24 animate-fade-in-up">
-<h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-<span class="gradient-text">実績</span>
-</h1>
-<h2 class="text-2xl md:text-3xl font-semibold text-white mb-6 max-w-4xl mx-auto">
-                データとAIで社会課題を解決し、倫理的な価値を創造する
-            </h2>
-<p class="text-lg text-gray-400 max-w-3xl mx-auto">
-                私の専門分野であるデータサイエンス、AI倫理、意思決定科学が、具体的なプロジェクトを通じてどのように実践され、倫理と実用性を両立させながら成果に結びついたかをご紹介します。
-            </p>
-</section>
-<!-- Placeholder Section -->
-<section class="animate-fade-in-up" style="animation-delay: 0.3s;">
-<!-- Preparation Message -->
-<div class="bg-brand-gray border border-gray-700 rounded-lg p-8 mb-16 text-center">
-<svg class="w-16 h-16 mx-auto mb-4 text-brand-accent" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-<h3 class="text-2xl font-bold text-white mb-2">プロジェクトを準備中です</h3>
-<p class="text-gray-400">
-                    現在、これまでの実績をまとめたポートフォリオを準備しております。<br/>
-                    随時プロジェクトを追加していきますので、今しばらくお待ちください。
+<main>
+<div class="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+<header class="text-center mb-12">
+<span class="text-sm font-semibold text-sky-400 uppercase tracking-wider">PROJECTS</span>
+<h1 class="mt-2 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+                    実績：理論から実践へ
+                </h1>
+<p class="mt-4 max-w-2xl mx-auto text-lg text-gray-400">
+                    哲学と知見を、具体的な形へ。ここでは、データとAIを用いて理論を具現化したプロジェクトの実績を記録・公開しています。
                 </p>
+<div class="mt-6 text-sm text-gray-500">
+<time datetime="2025-11-10">公開日: 2025年11月10日</time>
 </div>
-<!-- Placeholder Layout for Future Projects -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-<!-- Placeholder Card 1 -->
-<div class="bg-brand-gray rounded-lg overflow-hidden border border-gray-700/50 transform hover:-translate-y-2 transition-transform duration-300 opacity-50">
-<div class="bg-gray-700 aspect-video flex items-center justify-center">
-<svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</header>
+<div class="space-y-12">
+<section>
+<h2 class="text-2xl font-bold tracking-tight text-white sm:text-3xl border-l-4 border-sky-400 pl-4 mb-8">
+                        プロジェクト一覧
+                    </h2>
+<div class="grid grid-cols-1 gap-8">
+<!-- Project Card 1 -->
+<article class="bg-gray-800 border border-gray-700 rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-sky-400/20">
+<div class="p-6 md:p-8">
+<span class="text-xs font-semibold text-sky-400 uppercase">CASE STUDY 01</span>
+<h3 class="mt-2 text-xl font-bold text-white">
+<a class="hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-sky-500 rounded" href="project-ai-site-generation-agent-1.html">
+                                        実績: AIエージェント協働サイト構築 (sophia-echoes)
+                                    </a>
+</h3>
+<p class="mt-4 text-gray-300">
+                                    本サイト『sophia-echoes』の構築プロジェクト概要。人間（LOU-Ark）が哲学とビジョンを提示し、AI（Gemini 1.5 Pro）が戦略立案、HTMLコーディング、データ基盤連携、自己改善サイクルまでを実行した、人間とAIの新しい協業の実績（マイルストーン）を示します。
+                                </p>
+<a class="inline-block mt-6 text-sky-400 font-semibold hover:text-sky-300 transition-colors" href="project-ai-site-generation-agent-1.html">
+                                    詳細を読む →
+                                </a>
 </div>
-<div class="p-6">
-<div class="flex items-center space-x-2 mb-3">
-<span class="bg-brand-light-gray/50 text-blue-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">カテゴリ1</span>
-<span class="bg-brand-light-gray/50 text-indigo-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">カテゴリ2</span>
+</article>
+<!-- Project Card 2 -->
+<article class="bg-gray-800 border border-gray-700 rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-sky-400/20">
+<div class="p-6 md:p-8">
+<span class="text-xs font-semibold text-sky-400 uppercase">CASE STUDY 02</span>
+<h3 class="mt-2 text-xl font-bold text-white">
+<a class="hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-sky-500 rounded" href="manual-setup-ga4-gtm-for-ai-generated-site-16.html">
+                                        AIが作ったサイトに「感覚」を。GTMを使ったGA4分析基盤の手動構築ステップ
+                                    </a>
+</h3>
+<p class="mt-4 text-gray-300">
+                                    AIが自動生成したサイトに、分析の「神経網」を配線する第一弾。この記事では、Google Tag Manager経由でGoogle Analytics 4を手動設定し、サイトの行動を精密に把握するための具体的な技術的手順を解説します。
+                                </p>
+<a class="inline-block mt-6 text-sky-400 font-semibold hover:text-sky-300 transition-colors" href="manual-setup-ga4-gtm-for-ai-generated-site-16.html">
+                                    詳細を読む →
+                                </a>
 </div>
-<h4 class="text-xl font-bold text-white mb-2">プロジェクトタイトル</h4>
-<p class="text-gray-400 text-sm mb-4">
-                            ここにプロジェクトの簡単な説明文が入ります。課題、アプローチ、そして成果を簡潔にまとめます。
-                        </p>
-<a class="font-semibold text-brand-accent hover:underline" href="#">詳細を見る →</a>
-</div>
-</div>
-<!-- Placeholder Card 2 -->
-<div class="bg-brand-gray rounded-lg overflow-hidden border border-gray-700/50 transform hover:-translate-y-2 transition-transform duration-300 opacity-50">
-<div class="bg-gray-700 aspect-video flex items-center justify-center">
-<svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-</div>
-<div class="p-6">
-<div class="flex items-center space-x-2 mb-3">
-<span class="bg-brand-light-gray/50 text-blue-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">カテゴリ1</span>
-<span class="bg-brand-light-gray/50 text-purple-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">カテゴリ3</span>
-</div>
-<h4 class="text-xl font-bold text-white mb-2">プロジェクトタイトル</h4>
-<p class="text-gray-400 text-sm mb-4">
-                            ここにプロジェクトの簡単な説明文が入ります。課題、アプローチ、そして成果を簡潔にまとめます。
-                        </p>
-<a class="font-semibold text-brand-accent hover:underline" href="#">詳細を見る →</a>
-</div>
-</div>
-<!-- Placeholder Card 3 -->
-<div class="bg-brand-gray rounded-lg overflow-hidden border border-gray-700/50 transform hover:-translate-y-2 transition-transform duration-300 opacity-50">
-<div class="bg-gray-700 aspect-video flex items-center justify-center">
-<svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-</div>
-<div class="p-6">
-<div class="flex items-center space-x-2 mb-3">
-<span class="bg-brand-light-gray/50 text-indigo-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">カテゴリ2</span>
-</div>
-<h4 class="text-xl font-bold text-white mb-2">プロジェクトタイトル</h4>
-<p class="text-gray-400 text-sm mb-4">
-                            ここにプロジェクトの簡単な説明文が入ります。課題、アプローチ、そして成果を簡潔にまとめます。
-                        </p>
-<a class="font-semibold text-brand-accent hover:underline" href="#">詳細を見る →</a>
-</div>
-</div>
+</article>
 </div>
 </section>
+</div>
+</div>
 </main>
 <!-- Footer -->
-<footer class="bg-brand-gray border-t border-gray-800">
-<div class="container mx-auto px-6 py-12">
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-<div>
-<h3 class="text-xl font-bold text-white mb-2">LOU-Ark</h3>
-<p class="text-gray-400">データ駆動型QOL最適化と意思決定の科学</p>
+<footer class="bg-gray-900 border-t border-gray-800">
+<div class="container mx-auto px-6 py-8">
+<div class="md:flex md:items-center md:justify-between">
+<div class="flex justify-center md:order-2 space-x-6">
+<!-- Placeholder for social icons -->
+<a class="text-gray-400 hover:text-white" href="#">
+<span class="sr-only">GitHub</span>
+<svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24">
+<path clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" fill-rule="evenodd"></path>
+</svg>
+</a>
 </div>
-<div>
-<h4 class="text-lg font-semibold text-white mb-3">サイトマップ</h4>
-<ul class="space-y-2">
-<li><a class="text-gray-400 hover:text-brand-accent" href="../about/index.html">私について</a></li>
-<li><a class="text-gray-400 hover:text-brand-accent" href="./index.html">実績</a></li>
-<li><a class="text-gray-400 hover:text-brand-accent" href="../insights/index.html">知見</a></li>
-<li><a class="text-gray-400 hover:text-brand-accent" href="../philosophy/index.html">哲学</a></li>
-</ul>
-</div>
-<div>
-<h4 class="text-lg font-semibold text-white mb-3">接続する</h4>
-<ul class="space-y-2">
-<li><a class="text-gray-400 hover:text-brand-accent" href="../contact/index.html">お問い合わせ</a></li>
-<li><a class="text-gray-400 hover:text-brand-accent" href="../legal/index.html">法務情報</a></li>
-<!-- Add Social Media Links here -->
-</ul>
+<div class="mt-8 md:mt-0 md:order-1">
+<p class="text-center text-sm text-gray-400">© 2025 LOU-Ark Portfolio. All rights reserved.</p>
+<div class="flex justify-center mt-4 space-x-6">
+<a class="text-sm text-gray-500 hover:text-gray-300" href="../legal/index.html">法務情報</a>
 </div>
 </div>
-<div class="mt-12 border-t border-gray-700 pt-8 text-center text-gray-500">
-<p>© 2024 LOU-Ark Portfolio. All Rights Reserved.</p>
 </div>
 </div>
 </footer>
 <script>
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            var menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
         });
     </script>
 </body>

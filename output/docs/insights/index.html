@@ -9,216 +9,185 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>知見 | データ駆動型QOL最適化と意思決定の科学</title>
-<meta content="データとAIが拓く、意思決定の未来。データ駆動型QOL最適化と意思決定の科学に関する私たちの分析と考察の最前線。" name="description"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;family=Noto+Sans+JP:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&amp;display=swap" rel="stylesheet"/>
 <style>
         body {
-            font-family: 'Inter', 'Noto Sans JP', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        .gradient-text {
-            background: linear-gradient(to right, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
     </style>
+<script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans JP"', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
 </head>
-<body class="bg-gray-900 text-gray-200"><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript>
+<body class="bg-gray-900 text-gray-300 font-sans"><noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-N98QFDGW" style="display:none;visibility:hidden" width="0"></iframe></noscript>
+<div class="relative" id="container">
 <!-- Header -->
-<header class="bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-700/50">
-<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-<a class="text-2xl font-bold gradient-text hover:opacity-80 transition-opacity duration-300" href="../index.html">
-                Quantalize Futures
-            </a>
-<div class="hidden md:flex space-x-8 items-center">
+<header class="bg-gray-900/80 backdrop-blur-md sticky top-0 z-50">
+<nav class="container mx-auto px-6 py-4">
+<div class="flex items-center justify-between">
+<div class="text-white font-bold text-xl">
+<a class="hover:text-blue-400 transition-colors duration-300" href="../index.html">QOLience</a>
+</div>
+<div class="hidden md:flex items-center space-x-8">
 <a class="text-gray-300 hover:text-blue-400 transition-colors duration-300" href="../index.html">ホーム</a>
 <a class="text-gray-300 hover:text-blue-400 transition-colors duration-300" href="../about/index.html">私について</a>
-<a aria-current="page" class="text-blue-400 font-bold" href="index.html">知見</a>
 <a class="text-gray-300 hover:text-blue-400 transition-colors duration-300" href="../philosophy/index.html">哲学</a>
+<a aria-current="page" class="text-blue-400 font-bold" href="#">知見</a>
 <a class="text-gray-300 hover:text-blue-400 transition-colors duration-300" href="../projects/index.html">実績</a>
-<a class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300" href="../contact/index.html">お問い合わせ</a>
+<a class="text-gray-300 hover:text-blue-400 transition-colors duration-300" href="../contact/index.html">お問い合わせ</a>
 </div>
 <div class="md:hidden">
-<button class="text-gray-300 hover:text-white focus:outline-none" id="menu-btn">
-<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 6h16M4 12h16m-7 6h7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<button class="text-gray-300 hover:text-white focus:outline-none focus:text-white" id="menu-btn" type="button">
+<svg class="h-6 w-6 fill-current" viewbox="0 0 24 24">
+<path d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z" fill-rule="evenodd" id="menu-open-icon"></path>
+<path class="hidden" d="M12.707 12l6.647-6.646a.5.5 0 0 0-.708-.708L12 11.293 5.354 4.646a.5.5 0 1 0-.708.708L11.293 12l-6.647 6.646a.5.5 0 0 0 .708.708L12 12.707l6.646 6.647a.5.5 0 0 0 .708-.708L12.707 12z" fill-rule="evenodd" id="menu-close-icon"></path>
+</svg>
 </button>
 </div>
-</nav>
-<!-- Mobile Menu -->
-<div class="hidden md:hidden" id="mobile-menu">
-<a class="block py-2 px-6 text-sm text-gray-300 hover:bg-gray-800" href="../index.html">ホーム</a>
-<a class="block py-2 px-6 text-sm text-gray-300 hover:bg-gray-800" href="../about/index.html">私について</a>
-<a aria-current="page" class="block py-2 px-6 text-sm bg-gray-800 text-blue-400 font-bold" href="index.html">知見</a>
-<a class="block py-2 px-6 text-sm text-gray-300 hover:bg-gray-800" href="../philosophy/index.html">哲学</a>
-<a class="block py-2 px-6 text-sm text-gray-300 hover:bg-gray-800" href="../projects/index.html">実績</a>
-<a class="block py-2 px-6 text-sm text-gray-300 hover:bg-gray-800" href="../contact/index.html">お問い合わせ</a>
 </div>
+<!-- Mobile Menu -->
+<div class="hidden md:hidden mt-4" id="mobile-menu">
+<a class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-800 rounded" href="../index.html">ホーム</a>
+<a class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-800 rounded" href="../about/index.html">私について</a>
+<a class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-800 rounded" href="../philosophy/index.html">哲学</a>
+<a aria-current="page" class="block py-2 px-4 text-sm bg-gray-800 text-blue-400 rounded" href="#">知見</a>
+<a class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-800 rounded" href="../projects/index.html">実績</a>
+<a class="block py-2 px-4 text-sm text-gray-300 hover:bg-gray-800 rounded" href="../contact/index.html">お問い合わせ</a>
+</div>
+</nav>
 </header>
 <!-- Main Content -->
 <main>
-<!-- Hero Section -->
-<section class="py-24 md:py-32 bg-gray-900">
-<div class="container mx-auto px-6 text-center">
-<h1 class="text-4xl md:text-6xl font-black tracking-tighter mb-4 gradient-text">知見 (Insights)</h1>
-<p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400">
-                    データとAIが拓く、意思決定の未来。私たちの分析と考察の最前線へようこそ。ここでは、QOL（Quality of Life）の最大化と、より良い意思決定を科学的に追求するための知見を共有します。
-                </p>
-</div>
-</section>
-<!-- Introduction Section -->
-<section class="py-16 md:py-24 bg-gray-800/50">
-<div class="container mx-auto px-6 max-w-4xl">
-<div class="text-center mb-12">
-<h2 class="text-3xl md:text-4xl font-bold text-white mb-4">私たちの探求</h2>
-<p class="text-gray-400 text-lg">
-                        私たちのミッションは、データとAIの力を活用して、個人の可能性を最大化することです。この「知見」セクションは、そのミッションを達成するための研究、分析、そして考察のハブとして機能します。データサイエンス、AI倫理、意思決定科学、そしてプライバシー保護技術といった専門分野を横断し、具体的かつ実践的な洞察を提供することを目指しています。
+<div class="container mx-auto px-6 py-16 md:py-24">
+<header class="text-center max-w-3xl mx-auto">
+<h1 class="text-4xl md:text-5xl font-bold text-white leading-tight">知見 / Insights</h1>
+<p class="mt-6 text-lg text-gray-400">
+                        データ駆動型の意思決定、AI倫理、そしてQOL（Quality of Life）の科学的最適化に関する専門的な分析と考察を共有します。ここでは、ライフログ分析、意思決定科学、パーソナルAIの未来といったテーマを深く掘り下げ、テクノロジーが個人の可能性をいかに拡張しうるかを探求します。各記事は、理論的背景と実践的アプローチを統合し、未来を形作るための論理的な洞察を提供することを目的としています。
                     </p>
+</header>
+<!-- Article List Section -->
+<section class="mt-16 md:mt-24 max-w-4xl mx-auto">
+<div class="space-y-12">
+<!-- Article Item 1 -->
+<article class="group">
+<a class="block p-8 border border-gray-800 rounded-lg hover:bg-gray-800/50 hover:border-blue-500/30 transition-all duration-300" href="lifelog-data-analysis-for-decision-making-sleep-optimization-framework-18.html">
+<h2 class="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">ライフログ分析による意思決定の科学：睡眠データから導く生産性最大化のフレームワーク</h2>
+<p class="mt-4 text-gray-400 leading-relaxed">
+                                    日々のライフログ、特に睡眠データを活用して個人の生産性を最大化するためのデータ駆動型フレームワークを解説します。データ収集から可視化、統計的因果推論を用いた分析、そして最適な行動変容を促す意思決定プロセスまでを、具体的なツールと手法を交えて専門的に論じます。
+                                </p>
+<span class="mt-6 inline-block text-blue-400 group-hover:text-blue-300 transition-colors duration-300">続きを読む →</span>
+</a>
+</article>
+<!-- Article Item 2 -->
+<article class="group">
+<a class="block p-8 border border-gray-800 rounded-lg hover:bg-gray-800/50 hover:border-blue-500/30 transition-all duration-300" href="ethical-considerations-in-personal-ai-data-privacy-and-algorithmic-transparency-19.html">
+<h2 class="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">パーソナルAI時代の倫理：QOL最適化におけるデータプライバシーとアルゴリズムの透明性</h2>
+<p class="mt-4 text-gray-400 leading-relaxed">
+                                    個人のQOL最適化を目的としたAI活用が加速する中で避けて通れないのが倫理的課題です。本記事では、パーソナルデータの所有権、アルゴリズムによるバイアスのリスク、そして「説明可能なAI（XAI）」の重要性について深掘りし、利用者が安心してテクノロジーの恩恵を受けるための指針を提示します。
+                                </p>
+<span class="mt-6 inline-block text-blue-400 group-hover:text-blue-300 transition-colors duration-300">続きを読む →</span>
+</a>
+</article>
+<!-- Article Item 3 -->
+<article class="group">
+<a class="block p-8 border border-gray-800 rounded-lg hover:bg-gray-800/50 hover:border-blue-500/30 transition-all duration-300" href="data-driven-career-strategy-visualizing-market-value-with-bayesian-inference-20.html">
+<h2 class="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">データサイエンスを応用したキャリア戦略：ベイズ推定による自己の市場価値と最適パスの可視化</h2>
+<p class="mt-4 text-gray-400 leading-relaxed">
+                                    自身のスキルセットと経験、そして公開されている求人市場データを統合し、キャリアの意思決定を科学的に行う手法を提案します。本稿では、特にベイズ推定を用いて不確実性を考慮しながら自己の市場価値を評価し、将来の最適なキャリアパスを可視化する具体的なアプローチを解説します。
+                                </p>
+<span class="mt-6 inline-block text-blue-400 group-hover:text-blue-300 transition-colors duration-300">続きを読む →</span>
+</a>
+</article>
+<!-- Other articles without description -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-gray-800">
+<article class="group">
+<a class="block p-6 border border-gray-800 rounded-lg h-full hover:bg-gray-800/50 hover:border-blue-500/30 transition-all duration-300 flex flex-col justify-between" href="lifelog-data-driven-qol-optimization-ai-ethics-1.html">
+<h3 class="text-xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">ライフログ分析によるQOL最大化戦略：データ駆動型意思決定を実践するためのAI活用法と倫理的課題</h3>
+<span class="mt-4 inline-block text-blue-400 group-hover:text-blue-300 transition-colors duration-300">続きを読む →</span>
+</a>
+</article>
+<article class="group">
+<a class="block p-6 border border-gray-800 rounded-lg h-full hover:bg-gray-800/50 hover:border-blue-500/30 transition-all duration-300 flex flex-col justify-between" href="explainable-ai-xai-ethical-decision-making-future-2.html">
+<h3 class="text-xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">AI倫理の最前線：説明可能なAI（XAI）が拓く、透明性の高いデータ駆動型意思決定の未来</h3>
+<span class="mt-4 inline-block text-blue-400 group-hover:text-blue-300 transition-colors duration-300">続きを読む →</span>
+</a>
+</article>
+<article class="group">
+<a class="block p-6 border border-gray-800 rounded-lg h-full hover:bg-gray-800/50 hover:border-blue-500/30 transition-all duration-300 flex flex-col justify-between" href="decision-science-overcoming-cognitive-bias-with-data-3.html">
+<h3 class="text-xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">意思決定の科学：データ分析はいかに人間の認知バイアスを克服し、最適な選択を導くか</h3>
+<span class="mt-4 inline-block text-blue-400 group-hover:text-blue-300 transition-colors duration-300">続きを読む →</span>
+</a>
+</article>
+<article class="group">
+<a class="block p-6 border border-gray-800 rounded-lg h-full hover:bg-gray-800/50 hover:border-blue-500/30 transition-all duration-300 flex flex-col justify-between" href="scientific-optimization-of-decision-making-with-lifelog-analysis-10.html">
+<h3 class="text-xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">ライフログ分析による意思決定の科学的最適化：データで乗り越える認知バイアスとQOL向上の実践ガイド</h3>
+<span class="mt-4 inline-block text-blue-400 group-hover:text-blue-300 transition-colors duration-300">続きを読む →</span>
+</a>
+</article>
+<article class="group">
+<a class="block p-6 border border-gray-800 rounded-lg h-full hover:bg-gray-800/50 hover:border-blue-500/30 transition-all duration-300 flex flex-col justify-between" href="ethical-ai-design-federated-learning-differential-privacy-11.html">
+<h3 class="text-xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">パーソナルAI時代の倫理設計：QOLを最大化する連合学習と差分プライバシー技術</h3>
+<span class="mt-4 inline-block text-blue-400 group-hover:text-blue-300 transition-colors duration-300">続きを読む →</span>
+</a>
+</article>
+<article class="group">
+<a class="block p-6 border border-gray-800 rounded-lg h-full hover:bg-gray-800/50 hover:border-blue-500/30 transition-all duration-300 flex flex-col justify-between" href="quantifying-qol-causal-inference-reinforcement-learning-12.html">
+<h3 class="text-xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">主観的ウェルビーイングの定量化：データサイエンスで解き明かすQOL向上の因果関係と強化学習モデルの応用</h3>
+<span class="mt-4 inline-block text-blue-400 group-hover:text-blue-300 transition-colors duration-300">続きを読む →</span>
+</a>
+</article>
 </div>
 </div>
 </section>
-<!-- Articles Grid -->
-<section class="py-16 md:py-24">
-<div class="container mx-auto px-6">
-<h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-white">記事一覧</h2>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-<!-- Article Card 1 -->
-<div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-blue-500/20 transition-all duration-300 flex flex-col transform hover:-translate-y-1">
-<div class="p-6 flex-grow">
-<h3 class="text-xl font-bold text-white mb-3">ライフログ分析によるQOL最大化戦略：データ駆動型意思決定を実践するためのAI活用法と倫理的課題</h3>
-<p class="text-gray-400 mb-4 text-sm leading-relaxed">
-                                ライフログデータを活用し、AIを用いて生活の質（QOL）を向上させる具体的な方法論と、その際に考慮すべきプライバシーやバイアスといった倫理的課題について論じます。
-                            </p>
 </div>
-<div class="p-6 bg-gray-800/50">
-<a class="font-semibold text-blue-400 hover:text-blue-300 transition-colors duration-300 group" href="lifelog-data-driven-qol-optimization-ai-ethics-1.html">
-                                記事を読む <span class="inline-block transform group-hover:translate-x-1 transition-transform duration-200">→</span>
-</a>
-</div>
-</div>
-<!-- Article Card 2 -->
-<div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-purple-500/20 transition-all duration-300 flex flex-col transform hover:-translate-y-1">
-<div class="p-6 flex-grow">
-<h3 class="text-xl font-bold text-white mb-3">AI倫理の最前線：説明可能なAI（XAI）が拓く、透明性の高いデータ駆動型意思決定の未来</h3>
-<p class="text-gray-400 mb-4 text-sm leading-relaxed">
-                                AIの判断根拠を人間が理解できるようにする「説明可能なAI（XAI）」に焦点を当て、XAIがもたらす透明性が公正で倫理的なデータ駆動型意思決定を実現する鍵となるかを探ります。
-                            </p>
-</div>
-<div class="p-6 bg-gray-800/50">
-<a class="font-semibold text-purple-400 hover:text-purple-300 transition-colors duration-300 group" href="explainable-ai-xai-ethical-decision-making-future-2.html">
-                                記事を読む <span class="inline-block transform group-hover:translate-x-1 transition-transform duration-200">→</span>
-</a>
-</div>
-</div>
-<!-- Article Card 3 -->
-<div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 flex flex-col transform hover:-translate-y-1">
-<div class="p-6 flex-grow">
-<h3 class="text-xl font-bold text-white mb-3">意思決定の科学：データ分析はいかに人間の認知バイアスを克服し、最適な選択を導くか</h3>
-<p class="text-gray-400 mb-4 text-sm leading-relaxed">
-                                人間が陥りがちな認知バイアスを特定し、客観的なデータ分析を通じてそれらを克服する方法を解説。より合理的で最適な選択を行うための科学的アプローチを提案します。
-                            </p>
-</div>
-<div class="p-6 bg-gray-800/50">
-<a class="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors duration-300 group" href="decision-science-overcoming-cognitive-bias-with-data-3.html">
-                                記事を読む <span class="inline-block transform group-hover:translate-x-1 transition-transform duration-200">→</span>
-</a>
-</div>
-</div>
-<!-- Article Card 4 -->
-<div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-blue-500/20 transition-all duration-300 flex flex-col transform hover:-translate-y-1">
-<div class="p-6 flex-grow">
-<h3 class="text-xl font-bold text-white mb-3">ライフログ分析による意思決定の科学的最適化：データで乗り越える認知バイアスとQOL向上の実践ガイド</h3>
-<p class="text-gray-400 mb-4 text-sm leading-relaxed">
-                                ライフログ分析を意思決定プロセスに組み込む実践的なガイド。日々のデータからパターンを発見し、認知バイアスを回避しながらQOLを高めるための具体的な手法を紹介します。
-                            </p>
-</div>
-<div class="p-6 bg-gray-800/50">
-<a class="font-semibold text-blue-400 hover:text-blue-300 transition-colors duration-300 group" href="scientific-optimization-of-decision-making-with-lifelog-analysis-10.html">
-                                記事を読む <span class="inline-block transform group-hover:translate-x-1 transition-transform duration-200">→</span>
-</a>
-</div>
-</div>
-<!-- Article Card 5 -->
-<div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-purple-500/20 transition-all duration-300 flex flex-col transform hover:-translate-y-1">
-<div class="p-6 flex-grow">
-<h3 class="text-xl font-bold text-white mb-3">パーソナルAI時代の倫理設計：QOLを最大化する連合学習と差分プライバシー技術</h3>
-<p class="text-gray-400 mb-4 text-sm leading-relaxed">
-                                個々人に最適化されたAIが普及する未来を見据え、プライバシーを保護しながらQOLを最大化する技術的枠組みを探ります。連合学習や差分プライバシーの重要性を解説します。
-                            </p>
-</div>
-<div class="p-6 bg-gray-800/50">
-<a class="font-semibold text-purple-400 hover:text-purple-300 transition-colors duration-300 group" href="ethical-ai-design-federated-learning-differential-privacy-11.html">
-                                記事を読む <span class="inline-block transform group-hover:translate-x-1 transition-transform duration-200">→</span>
-</a>
-</div>
-</div>
-<!-- Article Card 6 -->
-<div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 flex flex-col transform hover:-translate-y-1">
-<div class="p-6 flex-grow">
-<h3 class="text-xl font-bold text-white mb-3">主観的ウェルビーイングの定量化：データサイエンスで解き明かすQOL向上の因果関係と強化学習モデルの応用</h3>
-<p class="text-gray-400 mb-4 text-sm leading-relaxed">
-                                「幸福」や「満足度」といった主観的なQOLをデータとして捉え分析する方法論。因果推論や強化学習を用いて、QOL向上に繋がる本質的な要因を科学的に解明します。
-                            </p>
-</div>
-<div class="p-6 bg-gray-800/50">
-<a class="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors duration-300 group" href="quantifying-qol-causal-inference-reinforcement-learning-12.html">
-                                記事を読む <span class="inline-block transform group-hover:translate-x-1 transition-transform duration-200">→</span>
-</a>
-</div>
-</div>
-</div>
-</div>
-</section>
 </main>
 <!-- Footer -->
-<footer class="bg-gray-900 border-t border-gray-700/50">
-<div class="container mx-auto px-6 py-12">
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-<div>
-<h3 class="text-lg font-bold gradient-text">Quantalize Futures</h3>
-<p class="text-gray-400 mt-2 text-sm">データとAIにより個人のQOLと可能性を最大化し、倫理と透明性を担保しながら、より豊かな社会の実現に貢献します。</p>
+<footer class="bg-gray-800/50">
+<div class="container mx-auto px-6 py-8">
+<div class="flex flex-col items-center justify-between md:flex-row">
+<div class="text-white font-bold text-lg mb-4 md:mb-0">
+<a class="hover:text-blue-400 transition-colors duration-300" href="../index.html">QOLience</a>
 </div>
-<div>
-<h4 class="text-md font-semibold text-gray-200">サイトマップ</h4>
-<ul class="mt-4 space-y-2 text-sm">
-<li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="../index.html">ホーム</a></li>
-<li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="../about/index.html">私について</a></li>
-<li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="index.html">知見</a></li>
-<li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="../philosophy/index.html">哲学</a></li>
-<li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="../projects/index.html">実績</a></li>
-<li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="../contact/index.html">お問い合わせ</a></li>
-</ul>
-</div>
-<div>
-<h4 class="text-md font-semibold text-gray-200">リーガル</h4>
-<ul class="mt-4 space-y-2 text-sm">
-<li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="../legal/index.html">法務情報</a></li>
-<li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="../legal/index.html#privacy">プライバシーポリシー</a></li>
-<li><a class="text-gray-400 hover:text-blue-400 transition-colors" href="../legal/index.html#terms">利用規約</a></li>
-</ul>
+<div class="flex flex-wrap justify-center space-x-6 mb-4 md:mb-0">
+<a class="text-gray-400 hover:text-white transition-colors duration-300" href="../index.html">ホーム</a>
+<a class="text-gray-400 hover:text-white transition-colors duration-300" href="../about/index.html">私について</a>
+<a class="text-gray-400 hover:text-white transition-colors duration-300" href="../philosophy/index.html">哲学</a>
+<a class="text-gray-400 hover:text-white transition-colors duration-300" href="#">知見</a>
+<a class="text-gray-400 hover:text-white transition-colors duration-300" href="../projects/index.html">実績</a>
+<a class="text-gray-400 hover:text-white transition-colors duration-300" href="../contact/index.html">お問い合わせ</a>
 </div>
 </div>
-<div class="mt-12 border-t border-gray-700/50 pt-8 flex flex-col md:flex-row justify-between items-center">
-<p class="text-sm text-gray-500">© 2024 Quantalize Futures Inc. All rights reserved.</p>
-<div class="flex space-x-4 mt-4 md:mt-0">
-<!-- Social Media Icon Placeholders -->
-<a class="text-gray-500 hover:text-white transition-colors" href="#"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd"></path></svg></a>
-<a class="text-gray-500 hover:text-white transition-colors" href="#"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg></a>
-<a class="text-gray-500 hover:text-white transition-colors" href="#"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12.019c0 4.438 2.865 8.229 6.839 9.544.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12.019C22 6.477 17.523 2 12 2z" fill-rule="evenodd"></path></svg></a>
-</div>
+<div class="mt-8 border-t border-gray-700 pt-8 text-center text-gray-500">
+<p>© 2024 Quantalize Futures Inc. All rights reserved.</p>
+<p class="mt-2 text-sm">
+<a class="hover:text-gray-300 underline" href="../legal/index.html">法務情報</a>
+</p>
 </div>
 </div>
 </footer>
+</div>
 <script>
-        // Mobile menu toggle
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
+        const menuOpenIcon = document.getElementById('menu-open-icon');
+        const menuCloseIcon = document.getElementById('menu-close-icon');
 
         menuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
+            menuOpenIcon.classList.toggle('hidden');
+            menuCloseIcon.classList.toggle('hidden');
         });
     </script>
 </body>
