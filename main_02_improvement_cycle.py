@@ -6,6 +6,7 @@ import re # ⬅️ [修正] re をインポート
 import time # ⬅️ [修正] リトライのために time をインポート
 from google import genai
 from datetime import datetime
+from utils.client_utils import setup_client
 
 # モジュールをインポート
 from agents.agent_03_generation import generate_single_page_html
@@ -31,23 +32,6 @@ REPORTS_DIR = os.path.join(PROJECT_ROOT_PATH, "output", "output_reports")
 
 REPORT_FILE = os.path.join(REPORTS_DIR, "planned_articles.md")
 DEFAULT_ARTICLE_COUNT = 3
-
-def setup_client():
-    # ... (この関数は変更なし) ...
-    try:
-        from google.colab import userdata
-        GOOGLE_API_KEY = userdata.get('GEMINI_API_KEY')
-        if not GOOGLE_API_KEY:
-            raise ValueError("GEMINI_API_KEY が Colab Secrets に設定されていません。")
-        return genai.Client(api_key=GOOGLE_API_KEY)
-    except ImportError:
-        GOOGLE_API_KEY = os.environ.get('GEMINI_API_KEY')
-        if not GOOGLE_API_KEY:
-            raise EnvironmentError("GEMINI_API_KEY が環境変数に設定されていません。")
-        return genai.Client(api_key=GOOGLE_API_KEY)
-    except Exception as e:
-        print(f"❌ クライアント初期化エラー: {e}")
-        return None
 
 def load_corporate_identity():
     # ... (この関数は変更なし) ...

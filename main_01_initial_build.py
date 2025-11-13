@@ -5,6 +5,7 @@ import shutil
 import re 
 from google import genai
 from google.genai import types 
+from utils.client_utils import setup_client
 
 # モジュールをインポート
 from agents.agent_01_identity import generate_corporate_identity
@@ -21,23 +22,6 @@ OPINION_FILE = "config/opinion.txt"
 MAIN_OUTPUT_DIR = "output"
 REPORTS_DIR = os.path.join(MAIN_OUTPUT_DIR, "output_reports")
 # (OUTPUT_DIR と ZIP_FILENAME は main() 内で動的に設定)
-
-def setup_client():
-    """Geminiクライアントを初期化"""
-    try:
-        from google.colab import userdata
-        GOOGLE_API_KEY = userdata.get('GEMINI_API_KEY')
-        if not GOOGLE_API_KEY:
-            raise ValueError("GEMINI_API_KEY が Colab Secrets に設定されていません。")
-        return genai.Client(api_key=GOOGLE_API_KEY)
-    except ImportError:
-        GOOGLE_API_KEY = os.environ.get('GEMINI_API_KEY')
-        if not GOOGLE_API_KEY:
-            raise EnvironmentError("GEMINI_API_KEY が環境変数に設定されていません。")
-        return genai.Client(api_key=GOOGLE_API_KEY)
-    except Exception as e:
-        print(f"❌ クライアント初期化エラー: {e}")
-        return None
 
 def generate_site_name_and_slug(client, identity, SITE_TYPE):
     """
