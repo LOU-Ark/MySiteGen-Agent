@@ -8,7 +8,6 @@ except ImportError:
     userdata = None
 
 def setup_client():
-    """Geminiクライアントを初期化"""
     try:
         if userdata:
             # Colab環境
