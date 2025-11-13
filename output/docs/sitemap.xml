@@ -2,163 +2,217 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://lou-ark.github.io/sophia-echoes/</loc>
-    <lastmod>2025-11-10</lastmod>
+    <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/contact/index.html</loc>
-    <lastmod>2025-11-10</lastmod>
+    <loc>https://lou-ark.github.io/sophia-echoes/projects/looker-studio-automate-last-n-months-report-29.html</loc>
+    <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lou-ark.github.io/sophia-echoes/projects/project-ai-site-generation-agent-1.html</loc>
-    <lastmod>2025-11-10</lastmod>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/projects/link-ga4-with-gsc-using-gtm-to-analyze-search-keywords-24.html</loc>
+    <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lou-ark.github.io/sophia-echoes/projects/manual-setup-ga4-gtm-for-ai-generated-site-16.html</loc>
-    <lastmod>2025-11-10</lastmod>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/projects/looker-studio-replicate-ga4-segment-with-calculated-field-for-cross-domain-cv-analysis-28.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/projects/bigquery-ga4-gsc-integration-for-ai-data-foundation-25.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/projects/building-ai-self-evolving-website-cycle-with-ga4-bigquery-26.html</loc>
+    <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lou-ark.github.io/sophia-echoes/projects/index.html</loc>
-    <lastmod>2025-11-10</lastmod>
+    <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/about/my-mission-for-data-driven-qol-optimization-13.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/about/how-i-optimize-qol-with-lifelog-data-analysis-5.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/about/vision-for-ai-powered-decision-making-and-privacy-6.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/about/my-mission-maximizing-qol-with-data-ai-ethics-4.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/about/index.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/about/how-lifelog-analysis-improves-decision-making-14.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/about/my-commitment-to-ai-ethics-and-data-privacy-15.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/legal/index.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/insights/ethical-considerations-in-personal-ai-data-privacy-and-algorithmic-transparency-19.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/insights/scientific-optimization-of-decision-making-with-lifelog-analysis-10.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/insights/data-driven-career-strategy-visualizing-market-value-with-bayesian-inference-20.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/insights/decision-science-overcoming-cognitive-bias-with-data-3.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/insights/index.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/insights/explainable-ai-xai-ethical-decision-making-future-2.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/insights/lifelog-data-analysis-for-decision-making-sleep-optimization-framework-18.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/insights/quantifying-qol-causal-inference-reinforcement-learning-12.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/insights/ethical-ai-design-federated-learning-differential-privacy-11.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/insights/lifelog-data-driven-qol-optimization-ai-ethics-1.html</loc>
-    <lastmod>2025-11-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lou-ark.github.io/sophia-echoes/philosophy/ai-ethics-free-will-data-driven-society-philosophy-4.html</loc>
-    <lastmod>2025-11-10</lastmod>
+    <loc>https://lou-ark.github.io/sophia-echoes/projects/looker-studio-ga4-translate-event-name-with-case-27.html</loc>
+    <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lou-ark.github.io/sophia-echoes/philosophy/lifelogging-know-thyself-socrates-data-self-awareness-philosophy-6.html</loc>
-    <lastmod>2025-11-10</lastmod>
+    <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lou-ark.github.io/sophia-echoes/philosophy/data-driven-qol-utilitarianism-philosophy-ethics-5.html</loc>
-    <lastmod>2025-11-10</lastmod>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/philosophy/philosophy-ai-decision-making-free-will-paradox-21.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/philosophy/philosophy-data-existentialism-lifelogging-self-identity-23.html</loc>
+    <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lou-ark.github.io/sophia-echoes/philosophy/index.html</loc>
-    <lastmod>2025-11-10</lastmod>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/philosophy/philosophy-utilitarian-ai-qol-privacy-tradeoff-22.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/philosophy/ai-ethics-free-will-data-driven-society-philosophy-4.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/insights/lifelog-data-analysis-for-decision-making-sleep-optimization-framework-18.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/insights/decision-science-overcoming-cognitive-bias-with-data-3.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/insights/scientific-optimization-of-decision-making-with-lifelog-analysis-10.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/insights/explainable-ai-xai-ethical-decision-making-future-2.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/insights/quantifying-qol-causal-inference-reinforcement-learning-12.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/insights/data-driven-career-strategy-visualizing-market-value-with-bayesian-inference-20.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/insights/ethical-ai-design-federated-learning-differential-privacy-11.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/insights/index.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/insights/ethical-considerations-in-personal-ai-data-privacy-and-algorithmic-transparency-19.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/insights/lifelog-data-driven-qol-optimization-ai-ethics-1.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/legal/index.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/about/my-commitment-to-ai-ethics-and-data-privacy-15.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/about/vision-for-ai-powered-decision-making-and-privacy-6.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/about/how-lifelog-analysis-improves-decision-making-14.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/about/how-i-optimize-qol-with-lifelog-data-analysis-5.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/about/my-mission-for-data-driven-qol-optimization-13.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/about/index.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/about/my-mission-maximizing-qol-with-data-ai-ethics-4.html</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lou-ark.github.io/sophia-echoes/contact/index.html</loc>
+    <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
