@@ -354,7 +354,7 @@ def main():
     
     # --- 10. X投稿用の更新リストを保存 (変更なし) ---
     print("\n--- [フェーズ10: X投稿用の更新リストを保存] ---")
-    output_for_x_bot = os.path.join("/content", "newly_updated_articles.json")
+    output_for_x_bot = os.path.join(PROJECT_ROOT_PATH, "newly_updated_articles.json")
     SITE_BASE_URL = "https://lou-ark.github.io/sophia-echoes/"
     articles_for_x = []
     
