@@ -190,9 +190,13 @@ def main():
         
         nav_list_hub = [{"file_name": p['file_name'], "title": p['title'], "purpose": p.get('summary', '')} for p in all_plans]
         
+        # ⬇️ [修正] summary が None の場合のガード処理を追加
+        parent_summary = parent.get('summary') or parent.get('purpose') or ""
+        
         code = generate_single_page_html(
             gemini_client,
-            {'file_name': parent['file_name'], 'title': parent['title'], 'purpose': parent.get('summary', '') + f"\n\n【記事リスト】\n{links_html}"},
+            # ⬇️ [修正] purposeの結合部分を安全に
+            {'file_name': parent['file_name'], 'title': parent['title'], 'purpose': parent_summary + f"\n\n【記事リスト】\n{links_html}"},
             CORPORATE_IDENTITY, None, nav_list_hub, SITE_TYPE=SITE_TYPE, retry_attempts=3, article_date=current_time_iso
         )
         if "❌" not in code:
@@ -210,7 +214,6 @@ def main():
     print("\n--- [フェーズ10: X投稿リスト生成] ---")
     output_for_x_bot = os.path.join(PROJECT_ROOT_PATH, "newly_updated_articles.json")
     
-    # ⬇️ [修正] 環境変数からリポジトリURLを自動生成
     github_repo = os.environ.get('GITHUB_REPOSITORY') # 例: LOU-Ark/repo-name
     if github_repo:
         username, repo_name = github_repo.split('/')
@@ -222,7 +225,6 @@ def main():
 
     articles_for_x = []
     
-    # ⬇️ [修正] 新規記事のみを追加 (ハブページの更新は除外して通知を減らす)
     for plan in new_article_files_generated:
         articles_for_x.append({
             "theme": plan['title'],
@@ -231,9 +233,6 @@ def main():
             "provided_summary": plan.get('summary', '記事の概要')
         })
     
-    # ハブページの更新通知はコメントアウト (必要なら解除)
-    # for plan in newly_updated_hubs: ...
-
     if articles_for_x:
         with open(output_for_x_bot, 'w', encoding='utf-8') as f:
             json.dump(articles_for_x, f, ensure_ascii=False, indent=2)
