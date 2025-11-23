@@ -1,4 +1,3 @@
-%%writefile /content/MySiteGen-Agent/run_x_bot_bridge.py
 import os
 import sys
 import importlib
