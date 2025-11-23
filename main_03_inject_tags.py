@@ -4,24 +4,15 @@ import re
 from bs4 import BeautifulSoup
 
 # --- 0. 設定 ---
-# ⬇️ [修正] スクリプト自身の場所を基準にした相対パスに変更
 try:
-    # スクリプトファイル自身の絶対パスを取得
-    # (例: /content/MySiteGen-Agent/main_03_inject_tags.py)
     SCRIPT_PATH = os.path.realpath(__file__)
 except NameError:
-    # Colabの対話環境などで __file__ が未定義の場合のフォールバック
     SCRIPT_PATH = os.getcwd()
 
-# スクリプトが置かれているディレクトリを取得 (例: /content/MySiteGen-Agent)
 SCRIPT_DIR = os.path.dirname(SCRIPT_PATH)
-
-# 探したい 'docs' フォルダのパスを構築
-# (例: /content/MySiteGen-Agent + reports + docs)
+# パスの互換性を考慮 (output/docs を優先)
 BASE_DIR = os.path.join(SCRIPT_DIR, "output", "docs")
-# ⬆️ [修正] "output" ではなく "reports" を経由
 
-# (GTMとAdSenseのテンプレート定義は変更なし)
 # GTMスニペットのテンプレート
 GTM_HEAD_TEMPLATE = """
 <script>(function(w,d,s,l,i){{w[l]=w[l]||[];w[l].push({{'gtm.start':
@@ -38,37 +29,55 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 # AdSenseスニペットのテンプレート
 ADSENSE_HEAD_TEMPLATE = """
-<script async src="https://pagead2.googletagmanager.com/pagead/js/adsbygoogle.js?client={ADSENSE_CLIENT_ID}"
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={ADSENSE_CLIENT_ID}"
      crossorigin="anonymous"></script>
 """.strip()
 
 
 def main():
-    # --- 1. IDの入力 ---
-    GTM_ID = input("Google Tag Manager ID (GTM-XXXXXXX) を入力してください (スキップはEnter): ").strip()
-    ADSENSE_CLIENT_ID = input("Google AdSense Client ID (ca-pub-...) を入力してください (スキップはEnter): ").strip()
+    # --- 1. IDの取得 (完全自動化対応: 入力待機を排除) ---
+    GTM_ID = None
+    ADSENSE_CLIENT_ID = None
 
+    try:
+        from google.colab import userdata
+        try:
+            GTM_ID = userdata.get('GTM_ID')
+            if GTM_ID: print(f"✅ シークレットから GTM_ID ({GTM_ID}) を読み込みました。")
+        except: pass
+        
+        try:
+            ADSENSE_CLIENT_ID = userdata.get('ADSENSE_CLIENT_ID')
+            if ADSENSE_CLIENT_ID: print(f"✅ シークレットから AdSense ID を読み込みました。")
+        except: pass
+    except ImportError:
+        pass
+
+    # ⬇️ [修正] IDがない場合、入力(input)を求めずにスキップする
     if not GTM_ID and not ADSENSE_CLIENT_ID:
-        print("❌ GTM ID と AdSense ID の両方が入力されませんでした。処理を終了します。")
-        sys.exit(1)
+        print("ℹ️ GTM ID / AdSense ID がシークレットに見つかりませんでした。")
+        print("ℹ️ タグ挿入プロセスをスキップして終了します（自動実行を継続）。")
+        return # エラー終了(sys.exit)ではなく、正常終了(return)させる
 
-    GTM_ID = GTM_ID or None
-    ADSENSE_CLIENT_ID = ADSENSE_CLIENT_ID or None
-
-    print(f"--- 🏷️ タグ挿入スクリプト (GTM: {GTM_ID}, AdSense: {ADSENSE_CLIENT_ID}) 開始 ---")
+    print(f"--- 🏷️ タグ挿入スクリプト開始 ---")
 
     # --- 2. サイトディレクトリのスキャン ---
+    # フォルダが見つからない場合のフォールバック
     if not os.path.isdir(BASE_DIR):
-        print(f"❌ サイトディレクトリ ({BASE_DIR}) が見つかりません。")
-        sys.exit(1)
+        ALT_BASE_DIR = os.path.join(SCRIPT_DIR, "reports", "docs")
+        if os.path.isdir(ALT_BASE_DIR):
+            BASE_DIR_TARGET = ALT_BASE_DIR
+        else:
+            print(f"❌ サイトディレクトリ ({BASE_DIR}) が見つかりません。スキップします。")
+            return
+    else:
+        BASE_DIR_TARGET = BASE_DIR
 
     files_processed = 0
     files_skipped = 0
     TARGET_EXTENSIONS = ('.html', '.htm')
 
-    print(f"--- 🏭 {BASE_DIR} 配下の全HTMLファイルをスキャン・処理中 ---")
-
-    for root, _, files in os.walk(BASE_DIR):
+    for root, _, files in os.walk(BASE_DIR_TARGET):
         for filename in files:
             if filename.lower().endswith(TARGET_EXTENSIONS):
                 full_path = os.path.join(root, filename)
@@ -80,42 +89,37 @@ def main():
                     modified = False
 
                     if not soup.head or not soup.body:
-                         print(f"⚠️ 警告: <head>または<body>タグなし (スキップ): {full_path}")
+                         # print(f"⚠️ スキップ: <head>または<body>なし: {filename}")
                          continue
 
-                    # --- 3. 既存のタグを「検索」 (変更なし) ---
-                    adsense_found = False
+                    # --- 3. 既存タグの削除 (重複防止) ---
                     if ADSENSE_CLIENT_ID:
                         existing_adsense = soup.head.find_all("script", {"src": re.compile(r"adsbygoogle\.js")})
                         for tag in existing_adsense:
-                            if ADSENSE_CLIENT_ID in tag.get('src', ''):
-                                adsense_found = True
                             tag.extract()
                             modified = True
 
-                    gtm_head_found = False
                     if GTM_ID:
-                        existing_gtm_head = soup.head.find_all("script", string=re.compile(f"dataLayer','{GTM_ID}'"))
+                        # Headタグ
+                        existing_gtm_head = soup.head.find_all("script", string=re.compile(r"gtm\.js"))
                         for tag in existing_gtm_head:
-                            gtm_head_found = True
-                            tag.extract()
-                            modified = True
-
-                    gtm_body_found = False
-                    if GTM_ID:
-                        existing_gtm_body = soup.body.find_all("noscript", string=re.compile(f"id={GTM_ID}"))
+                            if GTM_ID in tag.string:
+                                tag.extract()
+                                modified = True
+                        # Bodyタグ
+                        existing_gtm_body = soup.body.find_all("iframe", src=re.compile(r"googletagmanager\.com"))
                         for tag in existing_gtm_body:
-                            gtm_body_found = True
-                            tag.extract()
-                            modified = True
+                             if tag.parent.name == 'noscript':
+                                 tag.parent.extract()
+                                 modified = True
 
-                    # --- 4. AdSenseタグの挿入 (変更なし) ---
+                    # --- 4. AdSenseタグの挿入 ---
                     if ADSENSE_CLIENT_ID:
                         adsense_script_tag = BeautifulSoup(ADSENSE_HEAD_TEMPLATE.format(ADSENSE_CLIENT_ID=ADSENSE_CLIENT_ID), 'html.parser')
                         soup.head.insert(0, adsense_script_tag)
                         modified = True
 
-                    # --- 5. GTMタグの挿入 (変更なし) ---
+                    # --- 5. GTMタグの挿入 ---
                     if GTM_ID:
                         gtm_script_tag = BeautifulSoup(GTM_HEAD_TEMPLATE.format(GTM_ID=GTM_ID), 'html.parser')
                         insert_position = 1 if ADSENSE_CLIENT_ID else 0
@@ -123,35 +127,25 @@ def main():
 
                         gtm_noscript_tag = BeautifulSoup(GTM_BODY_TEMPLATE.format(GTM_ID=GTM_ID), 'html.parser')
                         soup.body.insert(0, gtm_noscript_tag)
-
                         modified = True
 
-                    # --- 6. ファイルを上書き保存 (変更があった場合のみ) ---
+                    # --- 6. 保存 ---
                     if modified:
-                        
-                        # [修正] BeautifulSoupの出力を一度文字列（str）として取得
                         html_output = str(soup)
-                        
-                        # [修正] 正規表現を使い、'async=""' を 'async' に置換
+                        # bs4による属性の崩れを修正
                         html_output = re.sub(r'async=""', 'async', html_output)
-                        # [修正] crossorigin="" も同様に置換
                         html_output = re.sub(r'crossorigin=""', 'crossorigin', html_output)
 
                         with open(full_path, 'w', encoding='utf-8') as f:
                             f.write(html_output)
-                            
-                        print(f"✅ タグ挿入/修正完了: {full_path}")
                         files_processed += 1
                     else:
                         files_skipped += 1
 
                 except Exception as e:
-                    print(f"❌ エラー ({full_path}): {e}")
+                    print(f"❌ エラー ({filename}): {e}")
 
-    print(f"\n--- 🏷️ スクリプト完了 ---")
-    print(f"✅ 合計 {files_processed} 件のHTMLファイルにタグを挿入/修正しました。")
-    print(f"ℹ️ 合計 {files_skipped} 件のHTMLファイルは変更ありませんでした。")
-
+    print(f"✅ 合計 {files_processed} 件のファイルにタグを挿入/更新しました。")
 
 if __name__ == "__main__":
     main()
