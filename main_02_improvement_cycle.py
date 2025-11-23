@@ -148,25 +148,25 @@ def main():
     )
     priority_file = priority_result['file_name']
     # ⬇️ [修正] 安全装置を追加
-        try:
-            priority_section_info = next(p for p in processed_articles if p['file_name'] == priority_file)
-        except StopIteration:
-            print(f"⚠️ 警告: AIが選定した '{priority_file}' が計画リストに見つかりませんでした。")
-            
-            # フォールバック: 'insights/index.html' またはリストにある最初のハブページを使用
-            fallback_candidates = [
-                p for p in processed_articles 
-                if p['file_name'].endswith('index.html') and p['file_name'] != 'index.html'
-            ]
-            
-            if fallback_candidates:
-                priority_section_info = fallback_candidates[0] # とりあえず最初の候補を使う
-                priority_file = priority_section_info['file_name']
-                print(f"⚠️ フォールバック: 代わりに '{priority_file}' を強化対象とします。")
-            else:
-                print("❌ エラー: 有効なハブページが計画リストに1つもありません。処理を中断します。")
-                sys.exit(1)
-        # ⬆️ [修正] ここまで
+    try:
+        priority_section_info = next(p for p in processed_articles if p['file_name'] == priority_file)
+    except StopIteration:
+        print(f"⚠️ 警告: AIが選定した '{priority_file}' が計画リストに見つかりませんでした。")
+        
+        # フォールバック: 'insights/index.html' またはリストにある最初のハブページを使用
+        fallback_candidates = [
+            p for p in processed_articles 
+            if p['file_name'].endswith('index.html') and p['file_name'] != 'index.html'
+        ]
+        
+        if fallback_candidates:
+            priority_section_info = fallback_candidates[0] # とりあえず最初の候補を使う
+            priority_file = priority_section_info['file_name']
+            print(f"⚠️ フォールバック: 代わりに '{priority_file}' を強化対象とします。")
+        else:
+            print("❌ エラー: 有効なハブページが計画リストに1つもありません。処理を中断します。")
+            sys.exit(1)
+    # ⬆️ [修正] ここまで
     print(f"✅ [フェーズ5b 完了] 最優先セクションが決定しました。")
     print(f"🥇 最優先セクション: {priority_section_info['title']} (`{priority_file}`)")
     print(f"🔑 選定理由: {priority_result['reason']}")
