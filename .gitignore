@@ -1,11 +1,10 @@
 __pycache__/
 *.pyc
 .DS_Store
-reports/
-reports/
-reports/
-output/
-output/
-output/
+.env
+venv/
+projects/
+*.txt
+*.log
 sophia-echoes/
 arche-narrative-portfolio/
