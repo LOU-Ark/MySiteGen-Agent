@@ -153,7 +153,7 @@ def generate_priority_article_titles(client, section_info, identity, count, star
     print(f"📢 AIに {section_info['title']} セクション用の記事 {count} 件の企画を依頼中...")
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-pro",
+            model="gemini-3-flash-preview",
             contents=prompt,
             config=types.GenerateContentConfig(response_mime_type="application/json")
         )

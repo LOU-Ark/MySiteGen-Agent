@@ -130,7 +130,7 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
         print(f"  > HTMLコードの生成を開始中... (試行 {attempt + 1}/{retry_attempts}) for {target_filename}")
         try:
             response = client.models.generate_content(
-                model="gemini-2.5-pro",
+                model="gemini-3-flash-preview",
                 contents=prompt_template
             )
             raw_output = response.text.strip()

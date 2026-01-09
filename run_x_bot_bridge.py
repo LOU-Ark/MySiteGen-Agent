@@ -43,7 +43,7 @@ except ImportError as e:
 
 # --- 定数定義 ---
 PERSONA_FILE_PATH = os.path.join(BOT_DIR, 'data', 'knowledge_base', 'persona.txt')
-MODEL_NAME_PRO = "gemini-2.5-pro"
+MODEL_NAME_PRO = "gemini-3-flash-preview"
 
 # --- ペルソナファイルの作成 ---
 try:
