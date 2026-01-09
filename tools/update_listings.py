@@ -6,6 +6,10 @@ from google import genai
 # .env wait handled by config/settings.py
 # load_dotenv(os.path.join(ROOT_DIR, ".env"))
 
+# --- 設定 ---
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(ROOT_DIR)
+
 from utils.client_utils import setup_client
 from agents.agent_03_generation import generate_single_page_html
 from config import settings
@@ -50,8 +54,8 @@ def extract_common_parts(html_path):
         if f: snippets["footer"] = f.group(0)
     return snippets
 
-def update_all_listings(project_root):
-    """プロジェクト内の全一覧ページを再生成する"""
+def update_all_listings(project_root, target_section=None):
+    """プロジェクト内の全一覧ページ（または指定セクションのみ）を再生成する"""
     docs_dir = os.path.join(project_root, "docs")
     reports_dir = os.path.join(project_root, "output_reports")
     planned_file = os.path.join(reports_dir, "planned_articles.md")
@@ -71,9 +75,17 @@ def update_all_listings(project_root):
     common_snippets = extract_common_parts(index_path)
 
     # セクションの特定 (projects, insights, philosophy, etc.)
-    sections = sorted(list(set([a["file_name"].split("/")[0] for a in articles if "/" in a["file_name"]])))
+    all_sections = sorted(list(set([a["file_name"].split("/")[0] for a in articles if "/" in a["file_name"]])))
+    
+    # 指定がある場合はそのセクションのみ、なければ全て
+    sections = [target_section] if target_section else all_sections
     
     for section in sections:
+        # 指定されたセクションが存在しない場合のガード
+        if section not in all_sections:
+            print(f"  ⚠️ セクション '{section}' は計画ファイル内に存在しません。スキップします。")
+            continue
+
         list_file = f"{section}/index.html"
         section_articles = [a for a in articles if a["file_name"].startswith(f"{section}/") and not a["file_name"].endswith("index.html")]
         
@@ -109,8 +121,11 @@ def update_all_listings(project_root):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python update_listings.py <project_root_path>")
+        print("Usage: python update_listings.py <project_root_path> [section_name]")
         sys.exit(1)
     
     project_root = sys.argv[1]
-    update_all_listings(project_root)
+    # 第2引数があればセクション指定として扱う
+    target_section = sys.argv[2] if len(sys.argv) > 2 else None
+    
+    update_all_listings(project_root, target_section)

@@ -34,6 +34,12 @@ def setup_client():
             if not GOOGLE_API_KEY:
                 raise EnvironmentError("GEMINI_API_KEY (または GEMINI_API_KEYS) が環境変数に設定されていません。")
         
+        # Debug: キーの確認 (セキュリティのため一部隠す)
+        if len(GOOGLE_API_KEY) > 10:
+             print(f"  🔑 Using API Key: {GOOGLE_API_KEY[:4]}...{GOOGLE_API_KEY[-4:]}")
+        else:
+             print(f"  🔑 Using API Key: (Too short/Invalid)")  
+
         return genai.Client(api_key=GOOGLE_API_KEY)
         
     except Exception as e:

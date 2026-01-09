@@ -306,8 +306,13 @@ def main():
             print(f"  > 計画ファイルに追記しました: {PLANNED_FILE}")
             
             # --- 一覧ページを自動更新 ---
-            print("\n一覧ページを自動更新中...")
-            update_all_listings(project_root)
+            # 記事が属するセクション名を取得 (例: projects/slug.html -> projects)
+            target_section = None
+            if "/" in target_article['file_name']:
+                target_section = target_article['file_name'].split('/')[0]
+            
+            print(f"\n一覧ページ({target_section})を自動更新中...")
+            update_all_listings(project_root, target_section)
     else:
         print("❌ 生成に失敗しました。")
 

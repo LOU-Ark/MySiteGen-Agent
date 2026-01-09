@@ -1,9 +1,18 @@
 import re
 import os
 import json
+import time
+import random
 from google import genai
 from google.genai import types
 from datetime import datetime
+try:
+    from config import settings
+except ImportError:
+    # settingsがない場合の簡易フォールバック（通常はありえない）
+    class MockSettings:
+        API_KEYS = []
+    settings = MockSettings()
 try:
     from config.settings import MODEL_NAME_PRO, MODEL_NAME_GEN
 except ImportError:
@@ -236,5 +245,20 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
 
         except Exception as e:
             print(f"エラーが発生しました: {e} for {target_filename}")
+            
+            # --- [追加] 自動フェイルオーバー (APIキーローテーション) ---
+            # エラー時、次の試行のためにクライアントを別のキーで再構築する
+            if hasattr(settings, 'API_KEYS') and settings.API_KEYS and len(settings.API_KEYS) > 1:
+                # ランダムにキーを選択 (確率的に回避)
+                new_key = random.choice(settings.API_KEYS)
+                print(f"  ↻ Switching to a new API Key for retry... (****{new_key[-4:]})")
+                try:
+                    client = genai.Client(api_key=new_key)
+                except Exception as client_err:
+                    print(f"  ⚠️ Failed to switch client: {client_err}")
+            # ----------------------------------------------------
 
-    return "❌ HTMLコードの生成に失敗しました。"
+            if attempt < retry_attempts - 1:
+                time.sleep(5) # ローテーション時は待ち時間短縮でOK
+            else:
+                return f"❌ HTMLコードの生成に失敗しました。\nError: {e}"

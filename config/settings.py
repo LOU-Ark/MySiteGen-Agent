@@ -14,13 +14,23 @@ API_KEYS = []
 # パターン1: カンマ区切りリスト (GEMINI_API_KEYS)
 env_keys = os.environ.get("GEMINI_API_KEYS")
 if env_keys:
-    API_KEYS = [k.strip() for k in env_keys.split(',') if k.strip()]
+    API_KEYS = [k.strip().strip('"').strip("'") for k in env_keys.split(',') if k.strip()]
 
 # パターン2: 単一キー (GEMINI_API_KEY) - リストが空の場合のフォールバック
 if not API_KEYS:
     single_key = os.environ.get("GEMINI_API_KEY")
     if single_key:
-        API_KEYS.append(single_key)
+        API_KEYS.append(single_key.strip().strip('"').strip("'"))
+
+# パターン3: 複数行キー (GEMINI_API_KEY_1, GEMINI_API_KEY_2, ...)
+# ユーザーが見やすく管理したい場合用
+for i in range(1, 11): # 最大10個までチェック
+    key_name = f"GEMINI_API_KEY_{i}"
+    val = os.environ.get(key_name)
+    if val:
+        cleaned_val = val.strip().strip('"').strip("'")
+        if cleaned_val and cleaned_val not in API_KEYS:
+            API_KEYS.append(cleaned_val)
 
 # 参考: Colab等の場合、ここではロードできない可能性があるため、
 # client_utilsで最終的なチェックを行う
