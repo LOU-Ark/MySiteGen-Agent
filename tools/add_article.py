@@ -19,6 +19,7 @@ sys.path.append(ROOT_DIR)
 try:
     from utils.client_utils import setup_client
     from agents.agent_03_generation import generate_single_page_html
+    from tools.update_listings import update_all_listings
     from config.settings import MODEL_NAME_PRO
 except ImportError:
     print("Error: MySiteGen-Agentのユーティリティまたは設定をインポートできませんでした。")
@@ -103,6 +104,27 @@ def extract_gtm_id(html_path):
         print(f"GTM ID 抽出エラー: {e}")
     return None
 
+def extract_common_parts(html_path):
+    """HTMLから <header> と <footer> の内容を抽出する"""
+    snippets = {"header": None, "footer": None}
+    if not os.path.exists(html_path):
+        return snippets
+    try:
+        with open(html_path, "r", encoding="utf-8") as f:
+            content = f.read()
+            # <header> ... </header> を抽出 (非貪欲マッチ)
+            header_match = re.search(r"<header.*?>.*?</header>", content, re.DOTALL | re.IGNORECASE)
+            if header_match:
+                snippets["header"] = header_match.group(0)
+            
+            # <footer> ... </footer> を抽出
+            footer_match = re.search(r"<footer.*?>.*?</footer>", content, re.DOTALL | re.IGNORECASE)
+            if footer_match:
+                snippets["footer"] = footer_match.group(0)
+    except Exception as e:
+        print(f"共通パーツ抽出エラー: {e}")
+    return snippets
+
 def main():
     client = setup_client()
     MODEL_NAME = MODEL_NAME_PRO
@@ -134,9 +156,11 @@ def main():
         with open(settings_path, "r", encoding="utf-8") as f:
             settings = json.load(f)
     
-    # index.html から GTM_ID を補完
+    # index.html から GTM_ID と共通パーツを抽出
+    index_path = os.path.join(DOCS_DIR, "index.html")
+    common_snippets = extract_common_parts(index_path)
+    
     if not settings.get("GTM_ID"):
-        index_path = os.path.join(DOCS_DIR, "index.html")
         gtm_id = extract_gtm_id(index_path)
         if gtm_id:
             settings["GTM_ID"] = gtm_id
@@ -267,7 +291,9 @@ def main():
         [], 
         SITE_TYPE="personal",
         GTM_ID=settings.get("GTM_ID"),
-        article_date=today_str # 日付を渡すように修正
+        article_date=today_str,
+        header_snippet=common_snippets.get("header"), # 抽出したヘッダー
+        footer_snippet=common_snippets.get("footer")  # 抽出したフッター
     )
     if html_content:
         output_path = os.path.join(DOCS_DIR, target_article["file_name"])
@@ -278,8 +304,12 @@ def main():
 
         if target_article.get("is_new"):
             with open(PLANNED_FILE, "a", encoding="utf-8") as f:
-                f.write(f"\n| {target_article['file_name']} | {target_article['title']} | {target_article['purpose']} |\n")
-            print(f"✅ 計画ファイル ({PLANNED_FILE}) に登録しました。")
+                f.write(f"\n| {target_article['file_name']} | {target_article['title']} | {target_article['purpose']} |")
+            print(f"  > 計画ファイルに追記しました: {PLANNED_FILE}")
+            
+            # --- 一覧ページを自動更新 ---
+            print("\n一覧ページを自動更新中...")
+            update_all_listings(project_root)
     else:
         print("❌ 生成に失敗しました。")
 

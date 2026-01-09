@@ -11,7 +11,7 @@ except ImportError:
     MODEL_NAME_GEN = "gemini-3-flash-preview"
 
 # ⬇️ [修正] 引数に article_date=None を追加
-def generate_single_page_html(client, target_page, identity, strategy_full, page_list, GTM_ID=None, ADSENSE_CLIENT_ID=None, SITE_TYPE='corporate', retry_attempts=3, article_date=None):
+def generate_single_page_html(client, target_page, identity, strategy_full, page_list, GTM_ID=None, ADSENSE_CLIENT_ID=None, SITE_TYPE='corporate', retry_attempts=3, article_date=None, header_snippet=None, footer_snippet=None):
     """
     ターゲットページ情報に基づいてプロンプトを動的に生成し、HTMLファイルを出力する。
     GTMとAdSenseのスニペットを自動で挿入し、サイトタイプに応じてフッターを変更する。
@@ -57,14 +57,15 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
         print(f"  > AdSense ID が指定されていないため、AdSenseタグは挿入しません。")
     # --- ⬆️ [修正] ここまで ---
 
-    # --- コンテンツ指示ロジック ('projects' の特別ルールを無効化) ---
-    if 'index.html' in target_filename:
-        # 通常のハブページ
-        content_instruction = f"このページはハブページ（目次）です。目的（{target_purpose}）を達成するため、**深い論理構成と具体的な記述**に焦点を当ててください。"
-    else:
-        # 通常の詳細記事
-        content_instruction = f"このページは詳細記事です。目的（{target_purpose}）を達成するため、**深い論理構成と具体的なデータサイエンスの記述**に焦点を当ててください。"
-    # --- ⬆️ [修正] ここまで ---
+    # --- 共通パーツの指示を生成 ---
+    snippet_instruction = ""
+    if header_snippet or footer_snippet:
+        snippet_instruction = "### 共通パーツの強制利用 (COMMON SNIPPETS)\n"
+        if header_snippet:
+            snippet_instruction += f"- **HEADER**: 以下のHTMLをヘッダーとしてそのまま使用してください（ナビゲーションリンクのパスは必要に応じて自動調整すること）:\n{header_snippet}\n"
+        if footer_snippet:
+            snippet_instruction += f"- **FOOTER**: 以下のHTMLをフッターとしてそのまま使用してください:\n{footer_snippet}\n"
+    # --- ⬆️ [追加] ---
 
     content_focus = f"**このページの具体的な目的と、必要なコンテンツの詳細:** {target_purpose}\n"
     if strategy_full:
@@ -129,6 +130,7 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
     {gtm_instructions}
     {adsense_instructions} 
     {date_instruction} 
+    {snippet_instruction}
 
     ### ページ固有の入力データ
     - ページのタイトル: {target_title}
