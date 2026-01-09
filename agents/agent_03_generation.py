@@ -5,9 +5,10 @@ from google import genai
 from google.genai import types
 from datetime import datetime
 try:
-    from config.settings import MODEL_NAME_PRO
+    from config.settings import MODEL_NAME_PRO, MODEL_NAME_GEN
 except ImportError:
     MODEL_NAME_PRO = "gemini-3-flash-preview"
+    MODEL_NAME_GEN = "gemini-3-flash-preview"
 
 # ⬇️ [修正] 引数に article_date=None を追加
 def generate_single_page_html(client, target_page, identity, strategy_full, page_list, GTM_ID=None, ADSENSE_CLIENT_ID=None, SITE_TYPE='corporate', retry_attempts=3, article_date=None):
@@ -134,17 +135,31 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
         print(f"  > HTMLコードの生成を開始中... (試行 {attempt + 1}/{retry_attempts}) for {target_filename}")
         try:
             response = client.models.generate_content(
-                model=MODEL_NAME_PRO,
+                model=MODEL_NAME_GEN, # 生成用モデルを使用
                 contents=prompt_template
             )
             raw_output = response.text.strip()
 
-            if raw_output.endswith("</html>\n```eof"):
-                match = re.search(r"```html\s*(.*?)\s*```eof", raw_output, re.DOTALL)
-                if match:
-                    return match.group(1).strip()
+            # より柔軟な抽出ロジック
+            # 1. ```html ... ``` を探す
+            match = re.search(r"```html\s*(.*?)\s*(?:```|$)", raw_output, re.DOTALL)
+            if match:
+                html_candidate = match.group(1).strip()
+                if "</html>" in html_candidate:
+                    return html_candidate
 
-            print(f"警告: コードが途中で切れたか、終了マーカーが見つかりませんでした。 for {target_filename}")
+            # 2. マーカーがない場合、<html>...</html> を直接探す
+            match = re.search(r"(<!DOCTYPE html>.*?</html>)", raw_output, re.DOTALL | re.IGNORECASE)
+            if match:
+                return match.group(1).strip()
+            
+            # 3. それでもダメで </html> で終わっているなら、マーカー類を削って返す
+            if "</html>" in raw_output:
+                clean_html = re.sub(r"^[^{]*\[START HTML CODE\]", "", raw_output, flags=re.DOTALL).strip()
+                clean_html = re.sub(r"```.*$", "", clean_html, flags=re.DOTALL).strip()
+                return clean_html
+
+            print(f"警告: 有効なHTML構造が見つかりませんでした。 for {target_filename}")
 
         except Exception as e:
             print(f"エラーが発生しました: {e} for {target_filename}")

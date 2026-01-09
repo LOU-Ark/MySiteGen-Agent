@@ -1,10 +1,15 @@
 import os
 import sys
 import re
+import json
+import random
 from google import genai
 from google.genai import types
+from dotenv import load_dotenv
 
 # --- 設定 ---
+# 環境変数の読み込み
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"))
 # tools/ から見たルートディレクトリ
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -21,14 +26,12 @@ except ImportError:
 def find_projects():
     """output_reports/planned_articles.md を含むディレクトリを探す"""
     projects = []
-    # 1. ルート直下のディレクトリを探索
     for item in os.listdir(ROOT_DIR):
         item_path = os.path.join(ROOT_DIR, item)
         if os.path.isdir(item_path) and item not in ["agents", "config", "tools", "utils", "venv", "__pycache__", ".git"]:
             if os.path.exists(os.path.join(item_path, "output_reports", "planned_articles.md")):
                 projects.append(item_path)
     
-    # 2. projects/ ディレクトリ内を探索
     projects_dir = os.path.join(ROOT_DIR, "projects")
     if os.path.exists(projects_dir):
         for item in os.listdir(projects_dir):
@@ -37,17 +40,42 @@ def find_projects():
                 if os.path.exists(os.path.join(item_path, "output_reports", "planned_articles.md")):
                     if item_path not in projects:
                         projects.append(item_path)
-    
     return projects
+
+def get_next_number(directory):
+    """ディレクトリ内のファイル名から最大の数字を探して +1 を返す"""
+    max_num = 0
+    if os.path.exists(directory):
+        for f in os.listdir(directory):
+            # ファイル名の末尾の数字を抽出 (例: name-37.html -> 37)
+            match = re.search(r"-(\d+)\.html$", f)
+            if match:
+                num = int(match.group(1))
+                if num > max_num:
+                    max_num = num
+    return max_num + 1
+
+def get_multiline_input(prompt):
+    print(prompt)
+    print("(入力を完了するには、Windowsなら Ctrl+Z、または 'END' とだけ入力してEnter)")
+    lines = []
+    while True:
+        try:
+            line = input()
+            if line.strip() == "END":
+                break
+            lines.append(line)
+        except EOFError:
+            break
+    return "\n".join(lines).strip()
 
 def main():
     client = setup_client()
     MODEL_NAME = MODEL_NAME_PRO
     
-    # プロジェクトの自動検出
     projects = find_projects()
     if not projects:
-        print("プロジェクトが見つかりませんでした。対象のプロジェクトフォルダに必要なファイル（output_reports/planned_articles.md）があるか確認してください。")
+        print("プロジェクトが見つかりませんでした。")
         return
 
     print("\n対象のプロジェクトを選択してください:")
@@ -58,162 +86,140 @@ def main():
         sel = int(input("\n選択 (番号): "))
         project_root = projects[sel]
     except (ValueError, IndexError):
-        print("無効な選択です。")
         return
 
-    # パスの設定
     DOCS_DIR = os.path.join(project_root, "docs")
     REPORTS_DIR = os.path.join(project_root, "output_reports")
     PLANNED_FILE = os.path.join(REPORTS_DIR, "planned_articles.md")
     IDENTITY_FILE = os.path.join(REPORTS_DIR, "01_identity.md")
 
-    # モード選択
-    print("\n何をしますか？")
-    print("[1] 計画済みの記事を生成する (planned_articles.md から選択)")
-    print("[2] 全く新しい記事を作成する (計画に追記して生成)")
+    print("\n--- 記事作成モード ---")
+    print("[1] 全自動作成 (原案からタイトル・目的をAIが生成) ★推奨")
+    print("[2] 手動作成 (タイトル・目的を自分で入力)")
+    print("[3] 計画済みの記事を生成 (planned_articles.md から選択)")
     
-    mode = input("選択 (1 or 2): ")
+    mode = input("選択 (1, 2, 3): ")
 
     target_article = None
 
     if mode == "1":
-        # 既存の計画から読み込み
-        if not os.path.exists(PLANNED_FILE):
-            print(f"Error: {PLANNED_FILE} が見つかりません。")
+        # 全自動作成モード
+        draft = get_multiline_input("\n実績の原案（メモ、箇条書き、Markdown等）を貼り付けてください:")
+        if not draft:
+            print("原案が入力されませんでした。")
             return
 
-        with open(PLANNED_FILE, "r", encoding="utf-8") as f:
-            content = f.read()
-
-        articles = []
-        lines = content.splitlines()
-        for line in lines:
-            if line.startswith("|") and not "ファイル名" in line and not "---" in line:
-                parts = [p.strip() for p in line.split("|")]
-                if len(parts) >= 4:
-                    file_path = parts[1]
-                    title = parts[2]
-                    purpose = parts[3]
-                    if file_path.endswith(".html") and "/" in file_path:
-                        articles.append({"file_name": file_path, "title": title, "purpose": purpose})
-
-        if not articles:
-            print("planned_articles.md 内に記事データが見つかりませんでした。")
-            return
-
-        print(f"\n{len(articles)} 件の記事案が見つかりました。")
+        print("\nAIが原案からタイトル、目的、ファイル名を考案中...")
+        prompt = f"""
+        以下の記事原案に基づき、ウェブサイトに掲載するための「タイトル」「目的（概要）」「URL用スラッグ」を考案してください。
         
-        # 2. セクションの選択
-        sections = sorted(list(set([a["file_name"].split("/")[0] for a in articles])))
-        print("\nセクションを選択してください:")
-        for i, s in enumerate(sections):
-            print(f"[{i}] {s}")
+        【原案】
+        {draft}
         
+        【出力形式】
+        JSON形式で出力してください。
+        {{
+            "title": "読者を惹きつける魅力的なタイトル",
+            "purpose": "この記事が解決する課題や価値の要約（200文字程度）",
+            "slug": "英単語をハイフンで繋いだスラッグ（例: looker-studio-automation）"
+        }}
+        """
         try:
-            sel = int(input("\n選択 (番号): "))
-            target_section = sections[sel]
-        except (ValueError, IndexError):
-            print("無効な選択です。")
-            return
-
-        section_articles = [a for a in articles if a["file_name"].startswith(target_section + "/")]
-        
-        print(f"\n'{target_section}' 内の記事:")
-        for i, a in enumerate(section_articles):
-            full_path = os.path.join(DOCS_DIR, a["file_name"])
-            status = "[生成済み]" if os.path.exists(full_path) else "[未生成]"
-            print(f"[{i}] {status} {a['title']}")
-
-        try:
-            sel_art = int(input("\n生成する記事を選択 (番号): "))
-            target_article = section_articles[sel_art]
-        except (ValueError, IndexError):
-            print("無効な選択です。")
+            resp = client.models.generate_content(
+                model=MODEL_NAME, 
+                contents=prompt,
+                config=types.GenerateContentConfig(response_mime_type="application/json")
+            )
+            data = json.loads(resp.text)
+            
+            target_article = {
+                "title": data["title"],
+                "file_name": f"projects/{data['slug']}-{get_next_number(os.path.join(DOCS_DIR, 'projects'))}.html",
+                "purpose": data["purpose"],
+                "draft": draft,
+                "is_new": True
+            }
+            print(f"\nAIの提案:")
+            print(f"  タイトル: {target_article['title']}")
+            print(f"  目的: {target_article['purpose']}")
+            print(f"  ファイル名: {target_article['file_name']}")
+            
+            confirm = input("\nこの内容で作成しますか？ (y/n): ")
+            if confirm.lower() != 'y':
+                print("中断しました。")
+                return
+        except Exception as e:
+            print(f"AIによる構成に失敗しました: {e}")
             return
 
     elif mode == "2":
-        # 新規作成
-        print("\n--- 新規記事の作成 ---")
+        # 手動作成モード
         title = input("記事のタイトル: ").strip()
-        print("セクションを選択:")
-        print("[0] projects (実績)")
-        print("[1] insights (知見)")
-        print("[2] philosophy (哲学)")
+        print("セクションを選択: [0] projects (実績) [1] insights (知見) [2] philosophy (哲学)")
         sec_sel = input("選択: ")
         section = {"0": "projects", "1": "insights", "2": "philosophy"}.get(sec_sel, "projects")
-        
         purpose = input("記事の概要・目的: ").strip()
         
-        # スラッグ生成 (AIに依頼)
         print("AIにファイル名を相談中...")
-        prompt = f"記事タイトル「{title}」に基づき、SEOに強く内容がわかる英単語をハイフンで繋いだスラッグ（拡張子なし）を生成してください。出力はスラッグのみ。例: looker-studio-automation"
+        prompt = f"「{title}」のスラッグを考案してください。出力はスラッグのみ。"
         resp = client.models.generate_content(model=MODEL_NAME, contents=prompt)
         slug = resp.text.strip().lower().replace(".html", "")
         
-        # 重複回避のためランダムなIDを追加
-        import random
-        file_id = random.randint(10, 99)
-        target_filename = f"{section}/{slug}-{file_id}.html"
-        
         target_article = {
             "title": title,
-            "file_name": target_filename,
+            "file_name": f"{section}/{slug}-{get_next_number(os.path.join(DOCS_DIR, section))}.html",
             "purpose": purpose,
             "is_new": True
         }
-        print(f"作成予定のファイル: {target_filename}")
+        draft = get_multiline_input("\n記事の原案を入力しますか？ (なければAIにお任せ、空でEnter):")
+        if draft:
+            target_article["draft"] = draft
 
+    elif mode == "3":
+        # 既存計画モード
+        with open(PLANNED_FILE, "r", encoding="utf-8") as f:
+            content = f.read()
+        articles = []
+        for line in content.splitlines():
+            if line.startswith("|") and not "ファイル名" in line and not "---" in line:
+                parts = [p.strip() for p in line.split("|")]
+                if len(parts) >= 4:
+                    articles.append({"file_name": parts[1], "title": parts[2], "purpose": parts[3]})
+        
+        sections = sorted(list(set([a["file_name"].split("/")[0] for a in articles])))
+        print("\nセクションを選択:")
+        for i, s in enumerate(sections): print(f"[{i}] {s}")
+        sel = int(input("選択: "))
+        target_section = sections[sel]
+        
+        section_articles = [a for a in articles if a["file_name"].startswith(target_section + "/")]
+        for i, a in enumerate(section_articles):
+            status = "[済]" if os.path.exists(os.path.join(DOCS_DIR, a["file_name"])) else "[未]"
+            print(f"[{i}] {status} {a['title']}")
+        sel_art = int(input("選択: "))
+        target_article = section_articles[sel_art]
     else:
-        print("中断しました。")
         return
 
-    # 2.1 記事の原案の取得
-    print("\n記事の原案（Markdown等）を入力しますか？")
-    print("[0] なし (AIにお任せ)")
-    print("[1] はい (テキストを入力/貼り付け)")
-    
-    draft_content = None
-    try:
-        draft_sel = int(input("選択: "))
-        if draft_sel == 1:
-            print("\n原案を入力してください (完了したら Ctrl+Z または Ctrl+D を押してEnter):")
-            draft_content = sys.stdin.read().strip()
-    except (ValueError, EOFError):
-        pass
-
-    if draft_content:
-        target_article["draft"] = draft_content
-
-    # 3. 生成
     with open(IDENTITY_FILE, "r", encoding="utf-8") as f:
         identity_content = f.read()
 
     print(f"\n生成開始: {target_article['title']}...")
-    
-    html = generate_single_page_html(
-        client, 
-        target_article, 
-        identity_content, 
-        None, # strategy_full は None に（draft は target_article 内にあるため）
-        [], 
-        SITE_TYPE="personal"
-    )
+    html = generate_single_page_html(client, target_article, identity_content, None, [], SITE_TYPE="personal")
 
     if html:
         output_path = os.path.join(DOCS_DIR, target_article["file_name"])
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(html)
-        print(f"生成成功: {output_path}")
+        print(f"\n✅ 生成成功: {output_path}")
 
-        # 4. 計画ファイルへの追記 (新規の場合のみ)
         if target_article.get("is_new"):
             with open(PLANNED_FILE, "a", encoding="utf-8") as f:
-                # ファイルの末尾が改行でない場合に備えて改行を追加
                 f.write(f"\n| {target_article['file_name']} | {target_article['title']} | {target_article['purpose']} |\n")
-            print(f"計画ファイル ({PLANNED_FILE}) に新しい実績記事を登録しました。")
+            print(f"✅ 計画ファイル ({PLANNED_FILE}) に登録しました。")
     else:
-        print("HTMLの生成に失敗しました。")
+        print("❌ 生成に失敗しました。")
 
 if __name__ == "__main__":
     main()
