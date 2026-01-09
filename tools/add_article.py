@@ -112,6 +112,13 @@ def main():
     PLANNED_FILE = os.path.join(REPORTS_DIR, "planned_articles.md")
     IDENTITY_FILE = os.path.join(REPORTS_DIR, "01_identity.md")
 
+    # 設定ファイルのロード (GTM_ID 等)
+    settings = {}
+    settings_path = os.path.join(project_root, "settings.json")
+    if os.path.exists(settings_path):
+        with open(settings_path, "r", encoding="utf-8") as f:
+            settings = json.load(f)
+
     print("\n--- 記事作成モード ---")
     print("[1] 全自動作成 (原案からタイトル・目的をAIが生成) ★推奨")
     print("[2] 手動作成 (タイトル・目的を自分で入力)")
