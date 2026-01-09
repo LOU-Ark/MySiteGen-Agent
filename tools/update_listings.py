@@ -3,14 +3,8 @@ import sys
 import json
 import re
 from google import genai
-from dotenv import load_dotenv
-
-# --- 設定 ---
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(ROOT_DIR)
-
-# .env をロード (Gemini APIキー等)
-load_dotenv(os.path.join(ROOT_DIR, ".env"))
+# .env wait handled by config/settings.py
+# load_dotenv(os.path.join(ROOT_DIR, ".env"))
 
 from utils.client_utils import setup_client
 from agents.agent_03_generation import generate_single_page_html

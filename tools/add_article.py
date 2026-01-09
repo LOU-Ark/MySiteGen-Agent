@@ -6,11 +6,9 @@ import random
 from google import genai
 from google.genai import types
 from datetime import datetime
-from dotenv import load_dotenv
-
 # --- 設定 ---
-# 環境変数の読み込み
-load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"))
+# 環境変数の読み込みは config/settings.py で行われるためここでは不要
+# tools/ から見たルートディレクトリ
 # tools/ から見たルートディレクトリ
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
