@@ -82,14 +82,23 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
     date_instruction = ""
     if article_date:
         try:
-            date_obj = datetime.fromisoformat(article_date.replace('Z', '+00:00'))
+            # 入力が文字列（2025-01-09など）の場合を考慮
+            if isinstance(article_date, str):
+                if 'T' in article_date:
+                    date_obj = datetime.fromisoformat(article_date.replace('Z', '+00:00'))
+                else:
+                    date_obj = datetime.strptime(article_date, "%Y-%m-%d")
+            else:
+                date_obj = article_date
+                
             formatted_date = date_obj.strftime("%Y年%m月%d日")
             date_instruction = f"""
-    7.  **日付の明記:** 記事のタイトル下など、読者から見える分かりやすい位置に、この記事の公開日（または更新日）として、**「{formatted_date}」**を必ず記載してください。
+    7.  **日付の明記:** 記事のタイトル下（メタ情報エリア）に、**「公開日: {formatted_date}」**という形式で必ず記載してください。
     """
-        except Exception:
+        except Exception as e:
+            print(f"日付処理エラー: {e}")
             date_instruction = f"""
-    7.  **日付の明記:** 記事のタイトル下など、読者から見える分かりやすい位置に、この記事の公開日（または更新日）として、**「{article_date}」**を記載してください。
+    7.  **日付の明記:** 記事のタイトル下（メタ情報エリア）に、**「公開日: {article_date}」**を記載してください。
     """
     # --- ⬆️ [追加] ---
 
@@ -102,20 +111,23 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
     - **必ず** `<!DOCTYPE html>` から `</html>` まで、全てのHTML構造を完全に記述してください。
     - **必ず** `\n```eof` で出力を完全に終了してください。（コードブロックは```htmlで開始してください）
 
-    ### 必須要件 (CRITICAL REQUIREMENTS)
-    1.  **デザインフレームの維持:** デザイン（配色、フォント、Tailwind CSS）を完全に維持してください。
-    2.  **ナビゲーションの統合（最重要）:**
-        - このページのファイルパスは `{target_filename}` です。
-        - 他のページへのリンク（例: ヘッダー、フッター）は、このパスからの**正しい相対パス**で生成する必要があります。
-        - (例1) `{target_filename}` が `insights/page.html` の場合、ルートの `index.html` へのリンクは `href="../index.html"` となります。
-        - (例2) `{target_filename}` が `insights/page.html` の場合、`vision/index.html` へのリンクは `href="../vision/index.html"` となります。
-        - (例3) `{target_filename}` が `index.html` （ルート）の場合、`vision/index.html` へのリンクは `href="vision/index.html"` となります。
-        - 渡された「確定した全ページリスト」に基づき、すべてのナビゲーションリンクをこのルールで生成してください。
-    3.  **コンテンツの役割:** {content_instruction}
-    4.  **Tailwind CSS:** CDNをロードし、全てのスタイリングにTailwindクラスを使用してください。
+    ### デザイン・フォーマット要件 (DESIGN REQUIREMENTS)
+    1.  **全体の雰囲気:** 背景は深みのあるダークモード (`bg-gray-900`)、テキストは読みやすいグレー (`text-gray-300`) を基調とします。
+    2.  **タイポグラフィ:** Google Fonts の 'Inter' をメイン、『Roboto Mono』を等幅フォントとして使用してください。
+    3.  **グラデーション:** 強調箇所やテキストには `#2dd4bf` (teal-400) から `#38bdf8` (blue-400) へのグラデーション (`gradient-text`) を使用してください。
+    4.  **ヘッダー/フッター:** 
+        - ヘッダーは `bg-gray-900/80 backdrop-blur-sm sticky top-0`。
+        - ロゴテキストは `LOU-Ark`。
+        - フッターにはサイトマップと著作権表記（© 2025 LOU-Ark Portfolio.）を含めてください。
+    5.  **記事構造:**
+        - パンくずリストを設置（ホーム > セクション名 > 記事タイトル）。リンクは相対パスで。
+        - 記事ヘッダーにはタグ（例：Looker Studio, GA4）をバッジ形式で配置。
+        - タイトルの下に「公開日: YYYY年MM月DD日」を配置。
+        - 本文は `prose prose-lg prose-invert max-w-none` クラスを適用した `div` 内に記述してください。
+    6.  **ナビゲーション:**
+        - 現在のファイルパス `{target_filename}` に基づき、`../index.html` などの相対パスを正確に生成してください。
     {gtm_instructions}
     {adsense_instructions} 
-    5.  **[修正] フッターの著作権:** {footer_instruction}
     {date_instruction} 
 
     ### ページ固有の入力データ

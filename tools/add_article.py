@@ -5,6 +5,7 @@ import json
 import random
 from google import genai
 from google.genai import types
+from datetime import datetime
 from dotenv import load_dotenv
 
 # --- 設定 ---
@@ -42,17 +43,35 @@ def find_projects():
                         projects.append(item_path)
     return projects
 
-def get_next_number(directory):
-    """ディレクトリ内のファイル名から最大の数字を探して +1 を返す"""
+def get_next_number(base_docs_dir):
+    """docs 配下の全ディレクトリ内のファイル名から最大の数字を探して +1 を返す"""
     max_num = 0
-    if os.path.exists(directory):
-        for f in os.listdir(directory):
-            # ファイル名の末尾の数字を抽出 (例: name-37.html -> 37)
+    if not os.path.exists(base_docs_dir):
+        return 1
+    
+    # 探索対象のサブディレクトリ
+    subdirs = ['projects', 'insights', 'philosophy', 'about', 'legal']
+    
+    for subdir in subdirs:
+        target_dir = os.path.join(base_docs_dir, subdir)
+        if os.path.exists(target_dir):
+            for f in os.listdir(target_dir):
+                # ファイル名の末尾の数字を抽出 (例: name-37.html -> 37)
+                match = re.search(r"-(\d+)\.html$", f)
+                if match:
+                    num = int(match.group(1))
+                    if num > max_num:
+                        max_num = num
+    
+    # ルート直下のリテラルファイルも一応チェック
+    for f in os.listdir(base_docs_dir):
+        if f.endswith('.html'):
             match = re.search(r"-(\d+)\.html$", f)
             if match:
                 num = int(match.group(1))
                 if num > max_num:
                     max_num = num
+
     return max_num + 1
 
 def get_multiline_input(prompt):
@@ -132,9 +151,10 @@ def main():
             )
             data = json.loads(resp.text)
             
+            next_num = get_next_number(DOCS_DIR)
             target_article = {
                 "title": data["title"],
-                "file_name": f"projects/{data['slug']}-{get_next_number(os.path.join(DOCS_DIR, 'projects'))}.html",
+                "file_name": f"projects/{data['slug']}-{next_num}.html",
                 "purpose": data["purpose"],
                 "draft": draft,
                 "is_new": True
@@ -165,9 +185,10 @@ def main():
         resp = client.models.generate_content(model=MODEL_NAME, contents=prompt)
         slug = resp.text.strip().lower().replace(".html", "")
         
+        next_num = get_next_number(DOCS_DIR)
         target_article = {
             "title": title,
-            "file_name": f"{section}/{slug}-{get_next_number(os.path.join(DOCS_DIR, section))}.html",
+            "file_name": f"{section}/{slug}-{next_num}.html",
             "purpose": purpose,
             "is_new": True
         }
@@ -205,13 +226,24 @@ def main():
         identity_content = f.read()
 
     print(f"\n生成開始: {target_article['title']}...")
-    html = generate_single_page_html(client, target_article, identity_content, None, [], SITE_TYPE="personal")
+    # --- [修正] 今日の日付を取得 (YYYY-MM-DD) ---
+    today_str = datetime.now().strftime("%Y-%m-%d")
 
-    if html:
+    html_content = generate_single_page_html(
+        client, 
+        target_article, 
+        identity_content, 
+        None, 
+        [], 
+        SITE_TYPE="personal",
+        GTM_ID=settings.get("GTM_ID"),
+        article_date=today_str # 日付を渡すように修正
+    )
+    if html_content:
         output_path = os.path.join(DOCS_DIR, target_article["file_name"])
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w", encoding="utf-8") as f:
-            f.write(html)
+            f.write(html_content)
         print(f"\n✅ 生成成功: {output_path}")
 
         if target_article.get("is_new"):
