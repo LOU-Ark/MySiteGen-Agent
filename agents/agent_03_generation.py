@@ -3,7 +3,11 @@ import os
 import json
 from google import genai
 from google.genai import types
-from datetime import datetime 
+from datetime import datetime
+try:
+    from config.settings import MODEL_NAME_PRO
+except ImportError:
+    MODEL_NAME_PRO = "gemini-3-flash-preview"
 
 # ⬇️ [修正] 引数に article_date=None を追加
 def generate_single_page_html(client, target_page, identity, strategy_full, page_list, GTM_ID=None, ADSENSE_CLIENT_ID=None, SITE_TYPE='corporate', retry_attempts=3, article_date=None):
@@ -130,7 +134,7 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
         print(f"  > HTMLコードの生成を開始中... (試行 {attempt + 1}/{retry_attempts}) for {target_filename}")
         try:
             response = client.models.generate_content(
-                model="gemini-3-flash-preview",
+                model=MODEL_NAME_PRO,
                 contents=prompt_template
             )
             raw_output = response.text.strip()

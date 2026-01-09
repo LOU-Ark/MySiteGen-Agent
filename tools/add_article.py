@@ -13,8 +13,9 @@ sys.path.append(ROOT_DIR)
 try:
     from utils.client_utils import setup_client
     from agents.agent_03_generation import generate_single_page_html
+    from config.settings import MODEL_NAME_PRO
 except ImportError:
-    print("Error: MySiteGen-Agentのユーティリティをインポートできませんでした。")
+    print("Error: MySiteGen-Agentのユーティリティまたは設定をインポートできませんでした。")
     sys.exit(1)
 
 def find_projects():
@@ -41,7 +42,7 @@ def find_projects():
 
 def main():
     client = setup_client()
-    MODEL_NAME = "gemini-3-flash-preview"
+    MODEL_NAME = MODEL_NAME_PRO
     
     # プロジェクトの自動検出
     projects = find_projects()

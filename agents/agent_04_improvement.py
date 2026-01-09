@@ -5,6 +5,10 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from google import genai
 from google.genai import types
+try:
+    from config.settings import MODEL_NAME_PRO
+except ImportError:
+    MODEL_NAME_PRO = "gemini-3-flash-preview"
 
 # (analyze_article_structure, generate_article_purpose は変更なし)
 def analyze_article_structure(file_path):
@@ -153,7 +157,7 @@ def generate_priority_article_titles(client, section_info, identity, count, star
     print(f"📢 AIに {section_info['title']} セクション用の記事 {count} 件の企画を依頼中...")
     try:
         response = client.models.generate_content(
-            model="gemini-3-flash-preview",
+            model=MODEL_NAME_PRO,
             contents=prompt,
             config=types.GenerateContentConfig(response_mime_type="application/json")
         )
