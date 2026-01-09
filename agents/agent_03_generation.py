@@ -21,6 +21,35 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
 
     nav_structure = "\n".join([f' - {p.get("title", "N/A")} ({p.get("file_name", "N/A")})' for p in page_list])
 
+    # --- ⬇️ [追加] Python側でグリッドHTMLを生成して強制挿入する ---
+    grid_html = ""
+    if page_list:
+        grid_html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-8">\n'
+        for page in page_list:
+            title = page.get('title', 'No Title')
+            # 目的が長い場合は丸める処理を入れてもいいが、一旦そのまま
+            desc = page.get('purpose', 'No Description')
+            # ファイル名からリンク先を特定 (相対パス計算は簡易的、同階層前提)
+            link = os.path.basename(page.get('file_name', '#'))
+            
+            # カテゴリ推定 (ディレクトリ名)
+            category = "Project"
+            if '/' in page.get('file_name', ''):
+                category = page.get('file_name', '').split('/')[0].capitalize()
+
+            grid_html += f"""
+            <!-- Article Card -->
+            <a href="{link}" class="block bg-brand-gray-800 rounded-lg p-6 hover:bg-brand-gray-700 hover:scale-105 transition-all duration-300 shadow-lg">
+                <div class="flex items-center mb-3">
+                    <span class="inline-block bg-brand-accent-500 text-brand-gray-900 text-xs font-semibold px-2.5 py-1 rounded-full">{category}</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">{title}</h3>
+                <p class="text-brand-light-300 text-sm">{desc}</p>
+            </a>
+            """
+        grid_html += '</div>'
+    # --- ⬆️ [追加] ---
+
     target_title = target_page['title']
     target_filename = target_page['file_name']
     target_purpose = target_page['purpose']
@@ -111,6 +140,7 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
     - **[START HTML CODE]** というマーカーからコードの記述を開始してください。
     - **必ず** `<!DOCTYPE html>` から `</html>` まで、全てのHTML構造を完全に記述してください。
     - **必ず** `\n```eof` で出力を完全に終了してください。（コードブロックは```htmlで開始してください）
+    - **CRITICAL:** 提供された「全ページリスト」の**全ての項目**に対して、必ずカード（またはリストアイテム）を作成してください。省略・要約は厳禁です。リストがN個あれば、N個のカードを出力してください。
 
     ### デザイン・フォーマット要件 (DESIGN REQUIREMENTS)
     1.  **全体の雰囲気:** 背景は深みのあるダークモード (`bg-gray-900`)、テキストは読みやすいグレー (`text-gray-300`) を基調とします。
@@ -141,6 +171,22 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
     - {identity_label}: {identity}
     - コンテンツ戦略（コンテンツ焦点）：{content_focus}
     - 確定した全ページリスト（ナビゲーション構造）:{nav_structure}
+    
+    ### CRITICAL: 記事一覧エリアのプレースホルダー
+    **記事一覧（カードのグリッド）を描画する場所には、以下のプレースホルダーのみを記述してください。**
+    AIが記事カードを生成する必要はありません。Pythonプログラムが後で置換します。
+    
+    <!-- GRID_PLACEHOLDER -->
+    
+    (上記プレースホルダーを、`main`タグ内の適切な場所（タイトルの下など）に配置してください。リスト項目は一切生成しないでください)
+    
+    ### CRITICAL: TEMPLATE MODE
+    You are generating a Layout Container.
+    1. Write the Header.
+    2. Write the Page Title and Intro.
+    3. Write `<!-- GRID_PLACEHOLDER -->`.
+    4. Write the Footer.
+    DO NOT GENERATE ANY ARTICLE CARDS. JUST THE PLACEHOLDER.
 
     [START HTML CODE]
     """
@@ -150,9 +196,22 @@ def generate_single_page_html(client, target_page, identity, strategy_full, page
         try:
             response = client.models.generate_content(
                 model=MODEL_NAME_GEN, # 生成用モデルを使用
-                contents=prompt_template
+                contents=prompt_template,
+                config=types.GenerateContentConfig(max_output_tokens=65536)
             )
             raw_output = response.text.strip()
+            
+            # --- ⬇️ [追加] プレースホルダーをPython生成のグリッドに置換 (最優先) ---
+            if "<!-- GRID_PLACEHOLDER -->" in raw_output:
+                print("  > プレースホルダーを検知しました。グリッドHTMLと置換します。")
+                raw_output = raw_output.replace("<!-- GRID_PLACEHOLDER -->", grid_html)
+            elif grid_html:
+                # プレースホルダーがない場合、強制的に mainの終わりの前などに挿入を試みるか、
+                # または AIが指示を無視した場合のリスクヘッジとして警告を出す
+                print("  ⚠️ 警告: GRID_PLACEHOLDER が検出されませんでした。AIが記事リストを自作した可能性があります。")
+            # --- ⬆️ [追加] ---
+
+            # より柔軟な抽出ロジック
 
             # より柔軟な抽出ロジック
             # 1. ```html ... ``` を探す

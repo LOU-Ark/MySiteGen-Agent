@@ -90,7 +90,10 @@ def update_all_listings(project_root):
         }
 
         print(f"  > 一覧ページ生成中: {list_file} ({len(section_articles)}件の記事)...")
-        
+        # Debug: 記事リストの末尾を確認
+        if section_articles:
+            print(f"    Last article: {section_articles[-1]['file_name']}")
+
         html = generate_single_page_html(
             client, 
             target_page, 
