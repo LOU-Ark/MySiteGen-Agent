@@ -88,6 +88,21 @@ def get_multiline_input(prompt):
             break
     return "\n".join(lines).strip()
 
+def extract_gtm_id(html_path):
+    """HTMLファイルから GTM-XXXXXXX 形式のIDを抽出する"""
+    if not os.path.exists(html_path):
+        return None
+    try:
+        with open(html_path, "r", encoding="utf-8") as f:
+            content = f.read()
+            # GTM- で始まる大文字英数字のパターンを探す
+            match = re.search(r"GTM-[A-Z0-9]+", content)
+            if match:
+                return match.group(0)
+    except Exception as e:
+        print(f"GTM ID 抽出エラー: {e}")
+    return None
+
 def main():
     client = setup_client()
     MODEL_NAME = MODEL_NAME_PRO
@@ -118,6 +133,14 @@ def main():
     if os.path.exists(settings_path):
         with open(settings_path, "r", encoding="utf-8") as f:
             settings = json.load(f)
+    
+    # index.html から GTM_ID を補完
+    if not settings.get("GTM_ID"):
+        index_path = os.path.join(DOCS_DIR, "index.html")
+        gtm_id = extract_gtm_id(index_path)
+        if gtm_id:
+            settings["GTM_ID"] = gtm_id
+            print(f"  > {os.path.basename(index_path)} から GTM ID ({gtm_id}) を検出しました。")
 
     print("\n--- 記事作成モード ---")
     print("[1] 全自動作成 (原案からタイトル・目的をAIが生成) ★推奨")
